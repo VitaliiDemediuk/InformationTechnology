@@ -1,7 +1,11 @@
 #ifndef VIRTUALTABLE_H
 #define VIRTUALTABLE_H
 
+// Local
 #include "ColumnUtils.h"
+
+// STL
+#include <functional>
 
 namespace core
 {
@@ -12,13 +16,15 @@ class VirtualTable // interface
 {
 public:
     virtual TableId id() const = 0;
+    virtual const std::wstring& name() const = 0;
+    virtual void changeName(std::wstring name) = 0;
 
     // Column info
-    virtual const ColumnInfo& column(size_t idx) const = 0;
+    virtual const VirtualColumnInfo& column(size_t idx) const = 0;
     virtual size_t columnCount() const = 0;
 
     // Column operations
-    virtual void createColumn(std::unique_ptr<ColumnInfo> info) = 0;
+    virtual void createColumn(std::unique_ptr<VirtualColumnInfo> info) = 0;
     virtual void deleteColumn(size_t idx) = 0;
     virtual void editColumnName(size_t idx, std::wstring name) = 0;
 
@@ -29,7 +35,7 @@ public:
     // Row operations
     virtual size_t addRow(Row&& data) = 0;
     virtual void deleteRow(size_t idx) = 0;
-    virtual void editRow(size_t idx, std::function<void(const Row&)>) = 0;
+    virtual void editRow(size_t idx, const std::function<void(Row&)>& worker) = 0;
 
 
     virtual ~VirtualTable() = default;

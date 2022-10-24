@@ -19,7 +19,3 @@ void core::VirtualColumnInfo::changeName(std::wstring name)
 {
     fName = std::move(name);
 }
-
-template <typename T>
-core::IntervalColumnInfo::IntervalColumnInfo(T fLowerLimit, T fUpperLimit, std::wstring name)
-{}
