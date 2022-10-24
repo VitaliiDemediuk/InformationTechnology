@@ -18,15 +18,13 @@ public:
     virtual void saveDatabase(const SaveInformation& saveInfo) = 0;
     virtual void deleteDatabase() = 0;
 
-    using TablePtr      = VirtualTable*;
-    using ConstTablePtr = const VirtualTable*;
     // Table operations
-    virtual TablePtr table(TableId id) = 0;
-    virtual ConstTablePtr table(TableId id) const = 0;
+    virtual VirtualTable& table(TableId id) = 0;
+    virtual const VirtualTable& table(TableId id) const = 0;
 
-    virtual TablePtr createTable() = 0;
+    virtual VirtualTable& createTable(std::wstring name) = 0;
     virtual void deleteTable(TableId id) = 0;
-    virtual TablePtr productTables(TableId firstId, TableId secondId) = 0;
+    virtual VirtualTable& productTables(TableId firstId, TableId secondId) = 0;
 
     virtual ~VirtualDatabase() = default;
 };

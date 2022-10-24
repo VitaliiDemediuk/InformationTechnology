@@ -6,6 +6,7 @@
 
 // Local
 #include "VirtualTable.h"
+#include "AbstractTableFactory.h"
 
 namespace core
 {
@@ -14,7 +15,7 @@ class CustomTable: public VirtualTable
 {
     using Super = VirtualTable;
 public:
-    explicit CustomTable(std::wstring name);
+    explicit CustomTable(TableId id, std::wstring name);
 
     TableId id() const final;
     const std::wstring& name() const final;
@@ -43,6 +44,14 @@ private:
     std::wstring fName;
     std::vector<std::unique_ptr<VirtualColumnInfo>> fColumns;
     std::map<size_t, Row> fTable;
+};
+
+class CustomTableFactory: public AbstractTableFactory
+{
+public:
+    FactoryType type() const final;
+
+    std::unique_ptr<VirtualTable> createTable(TableId id, std::wstring name) const final;
 };
 
 } // core

@@ -1,8 +1,5 @@
 #include "CustomTable.h"
 
-// STL
-#include <atomic>
-
 // boost
 #include <boost/throw_exception.hpp>
 
@@ -11,10 +8,8 @@
         BOOST_THROW_EXCEPTION(std::logic_error("Invalid column index!")); \
     }
 
-static std::atomic<core::TableId> lastTableId{1};
-
-core::CustomTable::CustomTable(std::wstring name)
-    : fId{lastTableId++}, fName{std::move(name)} {}
+core::CustomTable::CustomTable(TableId id, std::wstring name)
+    : fId{id}, fName{std::move(name)} {}
 
 core::TableId core::CustomTable::id() const
 {
@@ -95,4 +90,14 @@ void core::CustomTable::editRow(size_t key, const std::function<void(Row&)>& wor
         BOOST_THROW_EXCEPTION(std::logic_error("Invalid row key!"));
     }
     worker(it->second);
+}
+
+core::FactoryType core::CustomTableFactory::type() const
+{
+    return FactoryType::Custom;
+}
+
+std::unique_ptr<core::VirtualTable> core::CustomTableFactory::createTable(TableId id, std::wstring name) const
+{
+    return std::make_unique<CustomTable>(id, std::move(name));
 }
