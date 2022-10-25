@@ -17,6 +17,8 @@ public:
     virtual FactoryType type() const = 0;
 
     virtual std::unique_ptr<VirtualTable> createTable(TableId id, std::wstring name) const = 0;
+
+    virtual ~AbstractTableFactory() = default;
 };
 
 } // core
