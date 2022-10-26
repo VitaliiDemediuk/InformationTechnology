@@ -11,9 +11,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        MainWindow.cpp            MainWindow.h            MainWindow.ui
 )
 
 qt_add_executable(DatabaseDesktopClient
