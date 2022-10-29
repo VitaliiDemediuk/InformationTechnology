@@ -12,6 +12,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 set(PROJECT_SOURCES
         main.cpp
         MainWindow.cpp            MainWindow.h            MainWindow.ui
+        DesktopDatabaseClient.cpp DesktopDatabaseClient.h
+        Dialogs/NewDbDialog.cpp   Dialogs/NewDbDialog.h   Dialogs/NewDbDialog.ui
 )
 
 qt_add_executable(DatabaseDesktopClient
@@ -22,6 +24,8 @@ qt_add_executable(DatabaseDesktopClient
 target_link_libraries(DatabaseDesktopClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets core)
 
 target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../core/include)
+
+target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Dialogs)
 
 set_target_properties(DatabaseDesktopClient PROPERTIES
     CXX_STANDARD 20

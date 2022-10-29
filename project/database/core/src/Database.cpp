@@ -9,8 +9,18 @@
 // boost
 #include <boost/throw_exception.hpp>
 
-core::Database::Database(std::unique_ptr<const AbstractTableFactory> factory)
-    : fTableFactory{std::move(factory)} {}
+core::Database::Database(std::wstring name, std::unique_ptr<const AbstractTableFactory> factory)
+    : fName(std::move(name)), fTableFactory{std::move(factory)} {}
+
+const std::wstring& core::Database::name() const
+{
+    return fName;
+}
+
+bool core::Database::changeName(std::wstring name)
+{
+    fName = std::move(name);
+}
 
 void core::Database::saveDatabase(const SaveInformation& saveInfo)
 {}
@@ -51,4 +61,9 @@ void core::Database::deleteTable(TableId id)
 core::VirtualTable& core::Database::productTables(TableId firstId, TableId secondId)
 {
 
+}
+
+bool core::Database::validateTableName(const std::wstring& name) const
+{
+    return !name.empty();
 }

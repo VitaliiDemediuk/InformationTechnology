@@ -94,30 +94,30 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew_database"/>
-    <addaction name="actionOpen_database"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSave_as"/>
+    <addaction name="acNewDatabase"/>
+    <addaction name="acOpenDatabase"/>
+    <addaction name="acSave"/>
+    <addaction name="acSaveAs"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionNew_database">
+  <action name="acNewDatabase">
    <property name="text">
     <string>New database</string>
    </property>
   </action>
-  <action name="actionOpen_database">
+  <action name="acOpenDatabase">
    <property name="text">
     <string>Open database</string>
    </property>
   </action>
-  <action name="actionSave">
+  <action name="acSave">
    <property name="text">
     <string>Save</string>
    </property>
   </action>
-  <action name="actionSave_as">
+  <action name="acSaveAs">
    <property name="text">
     <string>Save as...</string>
    </property>

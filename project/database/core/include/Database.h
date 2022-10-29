@@ -16,9 +16,11 @@ class Database: public VirtualDatabase
 {
 public:
 
-    explicit Database(std::unique_ptr<const AbstractTableFactory> factory);
+    explicit Database(std::wstring name, std::unique_ptr<const AbstractTableFactory> factory);
 
     // Database operations
+    const std::wstring& name() const final;
+    bool changeName(std::wstring name) final;
     void saveDatabase(const SaveInformation& saveInfo) final;
     void deleteDatabase() final;
 
@@ -30,7 +32,11 @@ public:
     void deleteTable(TableId id) final;
     VirtualTable& productTables(TableId firstId, TableId secondId) final;
 
+    // VirtualValidator
+    bool validateTableName(const std::wstring& name) const final;
+
 private:
+    std::wstring fName;
     const std::unique_ptr<const AbstractTableFactory> fTableFactory;
     std::unordered_map<TableId, std::unique_ptr<VirtualTable>> fTables;
 };

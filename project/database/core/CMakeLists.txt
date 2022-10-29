@@ -5,6 +5,7 @@ add_library(core src/ColumnUtils.cpp    include/ColumnUtils.h
                  src/Database.cpp       include/Database.h
                                         include/AbstractTableFactory.h
                                         include/AbstractCommand.h
-                 src/DatabaseClient.cpp include/DatabaseClient.h)
+                 src/DatabaseClient.cpp include/DatabaseClient.h
+                                        include/VirtualValidators.h)
 
 target_include_directories(core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

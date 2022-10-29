@@ -1,20 +1,22 @@
 #ifndef VIRTUALDATABASE_H
 #define VIRTUALDATABASE_H
 
-
 // Core headers
 #include "VirtualTable.h"
+#include "VirtualValidators.h"
 
 namespace core
 {
 
 using SaveInformation = std::variant<std::filesystem::path>;
 
-class VirtualDatabase // interface
+class VirtualDatabase: public VirtualTableNameValidator
 {
 public:
 
     // Database operations
+    virtual const std::wstring& name() const = 0;
+    virtual bool changeName(std::wstring name) = 0;
     virtual void saveDatabase(const SaveInformation& saveInfo) = 0;
     virtual void deleteDatabase() = 0;
 

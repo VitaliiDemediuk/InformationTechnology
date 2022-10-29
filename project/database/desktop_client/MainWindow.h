@@ -4,10 +4,10 @@
 // Qt
 #include <QMainWindow>
 
-namespace Ui { class MainWindow; }
+// Local
+#include "DesktopDatabaseClient.h"
 
-namespace desktop
-{
+namespace Ui { class MainWindow; }
 
 class MainWindow: public QMainWindow
 {
@@ -17,10 +17,18 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void createNewDatabase();
+    void createNewTable();
+
 private:
+    // Methods
+    void reenable();
+    void refresh();
+
+    // Fields
+    desktop::DatabaseClient dbClient;
     std::unique_ptr<Ui::MainWindow> ui;
 };
-
-} // desktop
 
 #endif // MAINWINDOW_H
