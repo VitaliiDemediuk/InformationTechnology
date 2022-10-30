@@ -1,5 +1,5 @@
-#include "NewDbDialog.h"
-#include "ui_NewDbDialog.h"
+#include "NewTableDialog.h"
+#include "ui_NewTableDialog.h"
 
 // Qt
 #include <QPushButton>
@@ -7,26 +7,26 @@
 // Core
 #include <VirtualValidators.h>
 
-desktop::NewDbDialog::NewDbDialog(const core::VirtualDatabaseNameValidator& validator, QWidget* parent) :
+desktop::NewTableDialog::NewTableDialog(const core::VirtualTableNameValidator& validator, QWidget* parent) :
     QDialog{parent},
     fValidator{validator},
-    ui{new Ui::NewDbDialog}
+    ui{new Ui::NewTableDialog}
 {
     ui->setupUi(this);
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
     connect(ui->lineEdNewName, &QLineEdit::textEdited, this, [this] (const QString& text) {
-        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(fValidator.validateDatabaseName(text.trimmed().toStdWString()));
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(fValidator.validateTableName(text.trimmed().toStdWString()));
     });
 
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 }
 
-desktop::NewDbDialog::~NewDbDialog() = default;
+desktop::NewTableDialog::~NewTableDialog() = default;
 
-int desktop::NewDbDialog::exec(std::wstring& name)
+int desktop::NewTableDialog::exec(std::wstring& name)
 {
     const int res = Super::exec();
     if (res != 0) {

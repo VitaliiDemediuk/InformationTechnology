@@ -42,6 +42,13 @@ const core::VirtualTable& core::Database::table(TableId id) const
     return *it->second;
 }
 
+auto core::Database::forAllTable(std::function<void(const VirtualTable&)> worker) const -> const VirtualTable&
+{
+    for (const auto& [_, table] : fTables) {
+        worker(*table);
+    }
+}
+
 core::VirtualTable& core::Database::createTable(std::wstring name)
 {
     static std::atomic<core::TableId> lastTableId{1};

@@ -1,7 +1,11 @@
 #ifndef DESKTOPDATABASECLIENT_H
 #define DESKTOPDATABASECLIENT_H
 
+// Core
 #include "DatabaseClient.h"
+
+// Models
+#include "ResetableModel.h"
 
 namespace desktop
 {
@@ -9,7 +13,8 @@ namespace desktop
 class DatabaseClient: public core::DatabaseClient
 {
     using Super = core::DatabaseClient;
-private:
+public:
+    void resetModel(desktop::ResetableModel& model) const;
 };
 
 } // desktop

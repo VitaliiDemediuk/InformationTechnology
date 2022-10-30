@@ -4,11 +4,12 @@
 // Qt
 #include <QDialog>
 
-// Core
-#include <VirtualValidators.h>
-
 namespace Ui {
 class NewDbDialog;
+}
+
+namespace core {
+    class VirtualDatabaseNameValidator;
 }
 
 namespace desktop
@@ -16,11 +17,11 @@ namespace desktop
 
 class NewDbDialog: public QDialog
 {
-Q_OBJECT
+    Q_OBJECT
 
     using Super = QDialog;
 public:
-    explicit NewDbDialog(const core::VirtualDatabaseNameValidator& validator, QWidget *parent = nullptr);
+    explicit NewDbDialog(const core::VirtualDatabaseNameValidator& validator, QWidget* parent = nullptr);
     ~NewDbDialog() override;
 
     using Super::exec;

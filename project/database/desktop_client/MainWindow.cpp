@@ -3,8 +3,12 @@
 
 // Dialogs
 #include "NewDbDialog.h"
+#include "NewTableDialog.h"
+
+// Core
 #include "CustomTable.h"
 #include "Database.h"
+#include "Commands.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -25,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent)
     // Signal-slot connections
     connect(ui->acNewDatabase, &QAction::triggered, this, &MainWindow::createNewDatabase);
     connect(ui->createNewTableBtn, &QPushButton::clicked, this, &MainWindow::createNewTable);
+
+    // Set models
+    ui->tableListView->setModel(&tableListModel);
 }
 
 MainWindow::~MainWindow() = default;
@@ -37,13 +44,18 @@ void MainWindow::createNewDatabase()
     if (std::wstring dbName; dialog.exec(dbName)) {
         auto db = std::make_unique<core::Database>(std::move(dbName), std::make_unique<core::CustomTableFactory>());
         dbClient.setNewDatabase(std::move(db));
+        refresh();
     }
-    refresh();
 }
 
 void MainWindow::createNewTable()
 {
-
+    desktop::NewTableDialog dialog(dbClient, this);
+    if (std::wstring dbName; dialog.exec(dbName)) {
+        auto cmd = std::make_unique<core::command::CreateNewTable>(std::move(dbName));
+        dbClient.exec(std::move(cmd));
+        refresh();
+    }
 }
 
 /////////////// Private ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,6 +75,9 @@ void MainWindow::refresh()
         defaultTitle = defaultTitle.arg(QString::fromStdWString(dbClient.databaseName()));
     }
     setWindowTitle(defaultTitle);
+
+    // reset model
+    dbClient.resetModel(tableListModel);
 
     reenable();
 }

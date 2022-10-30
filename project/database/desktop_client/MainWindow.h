@@ -5,6 +5,7 @@
 #include <QMainWindow>
 
 // Local
+#include "TableListModel.h"
 #include "DesktopDatabaseClient.h"
 
 namespace Ui { class MainWindow; }
@@ -29,6 +30,7 @@ private:
     // Fields
     desktop::DatabaseClient dbClient;
     std::unique_ptr<Ui::MainWindow> ui;
+    desktop::TableListModel tableListModel;
 };
 
 #endif // MAINWINDOW_H
