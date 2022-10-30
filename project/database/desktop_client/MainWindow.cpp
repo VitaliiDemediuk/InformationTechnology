@@ -49,37 +49,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->acNewDatabase, &QAction::triggered, this, &MainWindow::createNewDatabase);
     connect(ui->createNewTableBtn, &QPushButton::clicked, this, &MainWindow::createNewTable);
 
-    connect(&d->acRenameTable, &QAction::triggered, this, [this] () {
-        const auto idx = d->lastTableListIdx;
-        const auto dbName = d->tableListModel.data(d->tableListModel.index(idx, 0)).toString().toStdWString();
-
-        desktop::TableNameDialog dialog(d->dbClient, this);
-        if (std::wstring newDbName = dbName; dialog.exec(newDbName) && newDbName != dbName) {
-            auto cmd = std::make_unique<core::command::RenameTable>(d->tableListModel.tableId(idx), std::move(newDbName));
-            d->dbClient.exec(std::move(cmd));
-            refresh();
-        }
-
-
-    });
-    connect(&d->acDeleteTable, &QAction::triggered, this, [this] () {
-        if (d->lastTableListIdx >= 0) {
-            auto cmd = std::make_unique<core::command::DeleteTable>(d->tableListModel.tableId(d->lastTableListIdx));
-            d->dbClient.exec(std::move(cmd));
-            refresh();
-        }
-    });
+    connect(&d->acRenameTable, &QAction::triggered, this, &MainWindow::renameTable);
+    connect(&d->acDeleteTable, &QAction::triggered, this, &MainWindow::deleteTable);
 
     ui->tableListView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->tableListView, &QListView::customContextMenuRequested, this,[this] (const QPoint& p) {
-        QMenu tableListContextMenu("Table list context menu", this);
-
-        tableListContextMenu.addAction(&d->acRenameTable);
-        tableListContextMenu.addAction(&d->acDeleteTable);
-
-        d->lastTableListIdx = ui->tableListView->indexAt(p).row();
-        tableListContextMenu.exec(ui->tableListView->mapToGlobal(p));
-    });
+    connect(ui->tableListView, &QListView::customContextMenuRequested, this, &MainWindow::showTableListContextMenu);
 
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
@@ -107,6 +81,39 @@ void MainWindow::createNewTable()
         d->dbClient.exec(std::move(cmd));
         refresh();
     }
+}
+
+void MainWindow::renameTable()
+{
+    const auto idx = d->lastTableListIdx;
+    const auto dbName = d->tableListModel.data(d->tableListModel.index(idx, 0)).toString().toStdWString();
+
+    desktop::TableNameDialog dialog(d->dbClient, this);
+    if (std::wstring newDbName = dbName; dialog.exec(newDbName) && newDbName != dbName) {
+        auto cmd = std::make_unique<core::command::RenameTable>(d->tableListModel.tableId(idx), std::move(newDbName));
+        d->dbClient.exec(std::move(cmd));
+        refresh();
+    }
+}
+
+void MainWindow::deleteTable()
+{
+    if (d->lastTableListIdx >= 0) {
+        auto cmd = std::make_unique<core::command::DeleteTable>(d->tableListModel.tableId(d->lastTableListIdx));
+        d->dbClient.exec(std::move(cmd));
+        refresh();
+    }
+}
+
+void MainWindow::showTableListContextMenu(const QPoint& p)
+{
+    QMenu tableListContextMenu("Table list context menu", this);
+
+    tableListContextMenu.addAction(&d->acRenameTable);
+    tableListContextMenu.addAction(&d->acDeleteTable);
+
+    d->lastTableListIdx = ui->tableListView->indexAt(p).row();
+    tableListContextMenu.exec(ui->tableListView->mapToGlobal(p));
 }
 
 /////////////// Private ////////////////////////////////////////////////////////////////////////////////////////////////

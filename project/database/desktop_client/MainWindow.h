@@ -21,6 +21,9 @@ public:
 private slots:
     void createNewDatabase();
     void createNewTable();
+    void renameTable();
+    void deleteTable();
+    void showTableListContextMenu(const QPoint& p);
 
 private:
     // Methods
