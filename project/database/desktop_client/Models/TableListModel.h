@@ -17,6 +17,8 @@ class TableListModel: public QAbstractListModel,
                       public ResetableModel
 {
 public:
+    core::TableId tableId(size_t idx) const;
+
     void reset(const core::VirtualDatabase* db) final;
 
     // QAbstractListModel

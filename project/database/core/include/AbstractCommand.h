@@ -11,7 +11,7 @@ class VirtualDatabase;
 class AbstractCommand
 {
 public:
-    virtual void exec(VirtualDatabase& db) const = 0;
+    virtual void exec(VirtualDatabase& db) = 0;
 
     virtual ~AbstractCommand() = default;
 };

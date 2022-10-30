@@ -3,6 +3,11 @@
 // Core
 #include "VirtualDatabase.h"
 
+core::TableId desktop::TableListModel::tableId(size_t idx) const
+{
+    return fTableList.at(idx).id;
+}
+
 void desktop::TableListModel::reset(const core::VirtualDatabase* db)
 {
     beginResetModel();

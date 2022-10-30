@@ -1,5 +1,5 @@
-#include "NewTableDialog.h"
-#include "ui_NewTableDialog.h"
+#include "TableNameDialog.h"
+#include "ui_TableNameDialog.h"
 
 // Qt
 #include <QPushButton>
@@ -7,10 +7,10 @@
 // Core
 #include <VirtualValidators.h>
 
-desktop::NewTableDialog::NewTableDialog(const core::VirtualTableNameValidator& validator, QWidget* parent) :
+desktop::TableNameDialog::TableNameDialog(const core::VirtualTableNameValidator& validator, QWidget* parent) :
     QDialog{parent},
     fValidator{validator},
-    ui{new Ui::NewTableDialog}
+    ui{new Ui::TableNameDialog}
 {
     ui->setupUi(this);
 
@@ -24,10 +24,11 @@ desktop::NewTableDialog::NewTableDialog(const core::VirtualTableNameValidator& v
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 }
 
-desktop::NewTableDialog::~NewTableDialog() = default;
+desktop::TableNameDialog::~TableNameDialog() = default;
 
-int desktop::NewTableDialog::exec(std::wstring& name)
+int desktop::TableNameDialog::exec(std::wstring& name)
 {
+    ui->lineEdNewName->setText(QString::fromStdWString(name));
     const int res = Super::exec();
     if (res != 0) {
         name = ui->lineEdNewName->text().trimmed().toStdWString();

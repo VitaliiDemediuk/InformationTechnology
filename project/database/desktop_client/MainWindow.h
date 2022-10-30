@@ -16,7 +16,7 @@ Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
 private slots:
     void createNewDatabase();
@@ -28,9 +28,8 @@ private:
     void refresh();
 
     // Fields
-    desktop::DatabaseClient dbClient;
     std::unique_ptr<Ui::MainWindow> ui;
-    desktop::TableListModel tableListModel;
+    std::unique_ptr<struct MainWindowData> d;
 };
 
 #endif // MAINWINDOW_H
