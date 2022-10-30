@@ -115,7 +115,7 @@ void MainWindow::reenable()
 {
     ui->createNewTableBtn->setEnabled(d->dbClient.haveDatabase());
     ui->tableListView->setEnabled(d->dbClient.haveDatabase());
-    ui->tableView->setEnabled(d->dbClient.haveDatabase());
+    ui->mainWidget->setEnabled(d->dbClient.haveDatabase());
 }
 
 void MainWindow::refresh()
