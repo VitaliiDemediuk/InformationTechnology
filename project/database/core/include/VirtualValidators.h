@@ -1,6 +1,8 @@
 #ifndef VIRTUALVALIDATORS_H
 #define VIRTUALVALIDATORS_H
 
+#include <string>
+
 namespace core
 {
 
@@ -18,6 +20,14 @@ public:
     virtual bool validateDatabaseName(const std::wstring &name) const = 0;
 
     virtual ~VirtualDatabaseNameValidator() = default;
+};
+
+class VirtualColumnNameValidator
+{
+public:
+    virtual bool validateColumnName(const std::wstring &name) const = 0;
+
+    virtual ~VirtualColumnNameValidator() = default;
 };
 
 } // core

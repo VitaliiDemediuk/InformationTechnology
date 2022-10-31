@@ -2,7 +2,7 @@
 #define DATABASE_H
 
 // STL
-#include <unordered_map>
+#include <map>
 
 // Local
 #include "VirtualDatabase.h"
@@ -35,11 +35,12 @@ public:
 
     // VirtualValidator
     bool validateTableName(const std::wstring& name) const final;
+    bool validateColumnName(const std::wstring& name) const final;
 
 private:
     std::wstring fName;
     const std::unique_ptr<const AbstractTableFactory> fTableFactory;
-    std::unordered_map<TableId, std::unique_ptr<VirtualTable>> fTables;
+    std::map<TableId, std::unique_ptr<VirtualTable>> fTables;
 };
 
 } // core

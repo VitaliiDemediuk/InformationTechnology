@@ -4,6 +4,7 @@
 // Dialogs
 #include "NewDbDialog.h"
 #include "TableNameDialog.h"
+#include "ColumnInfoDialog.h"
 
 // Core
 #include "CustomTable.h"
@@ -24,6 +25,7 @@ struct MainWindowData
     QAction acRenameTable;
     QAction acDeleteTable;
     int lastTableListIdx = -1;
+    std::optional<core::TableId> currentTableId;
 };
 
 MainWindow::MainWindow(QWidget *parent)
@@ -54,6 +56,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tableListView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableListView, &QListView::customContextMenuRequested, this, &MainWindow::showTableListContextMenu);
+    connect(ui->tableListView, &QListView::activated, this, &MainWindow::refreshCurrentTableId);
+    connect(ui->tableListView, &QListView::entered, this, &MainWindow::refreshCurrentTableId);
+    connect(ui->tableListView, &QListView::pressed, this, &MainWindow::refreshCurrentTableId);
+    connect(ui->tableListView, &QListView::clicked, this, &MainWindow::refreshCurrentTableId);
+    connect(&d->tableListModel, &QAbstractListModel::modelReset, this, [this] () {
+        if (ui->tableListView->currentIndex().row() == -1) {
+            d->currentTableId.reset();
+            refreshTable();
+            reenable();
+        }
+    });
+
+    connect(ui->addColumnBtn, &QPushButton::clicked, this, &MainWindow::addColumn);
 
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
@@ -80,6 +95,9 @@ void MainWindow::createNewTable()
         auto cmd = std::make_unique<core::command::CreateNewTable>(std::move(dbName));
         d->dbClient.exec(std::move(cmd));
         refresh();
+        const auto index = d->tableListModel.index(d->tableListModel.rowCount() - 1, 0);
+        ui->tableListView->setCurrentIndex(index);
+        refreshCurrentTableId(index);
     }
 }
 
@@ -102,6 +120,11 @@ void MainWindow::deleteTable()
         auto cmd = std::make_unique<core::command::DeleteTable>(d->tableListModel.tableId(d->lastTableListIdx));
         d->dbClient.exec(std::move(cmd));
         refresh();
+        if (const auto rowCount = d->tableListModel.rowCount(); rowCount > 0) {
+            const auto index = d->tableListModel.index(std::min(rowCount - 1, d->lastTableListIdx), 0);
+            ui->tableListView->setCurrentIndex(index);
+            refreshCurrentTableId(index);
+        }
     }
 }
 
@@ -116,19 +139,54 @@ void MainWindow::showTableListContextMenu(const QPoint& p)
     tableListContextMenu.exec(ui->tableListView->mapToGlobal(p));
 }
 
+void MainWindow::refreshCurrentTableId(const QModelIndex& index)
+{
+    const auto id = d->tableListModel.tableId(index.row());
+    if (!d->currentTableId || d->currentTableId != id) {
+        d->currentTableId = id;
+        refreshTable();
+        reenable();
+    }
+}
+
+void MainWindow::addColumn()
+{
+    if (!d->currentTableId.has_value()) {
+        return;
+    }
+
+    desktop::ColumnInfoDialog dialog(d->dbClient, this);
+    if (std::unique_ptr<core::VirtualColumnInfo> newColumnInfo; dialog.exec(newColumnInfo)) {
+        auto cmd = std::make_unique<core::command::AddColumn>(d->currentTableId.value(), std::move(newColumnInfo));
+        d->dbClient.exec(std::move(cmd));
+        refreshTable();
+        reenable();
+    }
+}
+
 /////////////// Private ////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MainWindow::reenable()
 {
-    ui->createNewTableBtn->setEnabled(d->dbClient.haveDatabase());
-    ui->tableListView->setEnabled(d->dbClient.haveDatabase());
-    ui->mainWidget->setEnabled(d->dbClient.haveDatabase());
+    ui->createNewTableBtn->setEnabled(d->dbClient.hasDatabase());
+    ui->tableListView->setEnabled(d->dbClient.hasDatabase());
+    ui->mainWidget->setEnabled(d->dbClient.hasDatabase() && d->currentTableId.has_value());
+
+    if (d->currentTableId) {
+        const auto* table = d->dbClient.table(d->currentTableId.value());
+        ui->addRowBtn->setEnabled(table && table->columnCount() > 0);
+    }
+}
+
+void MainWindow::refreshTable()
+{
+
 }
 
 void MainWindow::refresh()
 {
     QString defaultTitle = "Database";
-    if (d->dbClient.haveDatabase()) {
+    if (d->dbClient.hasDatabase()) {
         defaultTitle.append(" (%1)");
         defaultTitle = defaultTitle.arg(QString::fromStdWString(d->dbClient.databaseName()));
     }
@@ -136,6 +194,8 @@ void MainWindow::refresh()
 
     // reset model
     d->dbClient.resetModel(d->tableListModel);
+
+    refreshTable();
 
     reenable();
 }

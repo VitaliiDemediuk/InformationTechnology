@@ -32,11 +32,22 @@ private:
 class DeleteTable: public AbstractCommand
 {
 public:
-    explicit DeleteTable(core::TableId fId);
+    explicit DeleteTable(core::TableId id);
 
     void exec(VirtualDatabase& db) final;
 private:
     const core::TableId fId;
+};
+
+class AddColumn: public AbstractCommand
+{
+public:
+    explicit AddColumn(core::TableId id, std::unique_ptr<core::VirtualColumnInfo> columnInfo);
+
+    void exec(VirtualDatabase& db) final;
+private:
+    const core::TableId fId;
+    std::unique_ptr<core::VirtualColumnInfo> fColumnInfo;
 };
 
 } // core::command

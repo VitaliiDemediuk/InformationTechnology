@@ -10,13 +10,16 @@ namespace core
 
 enum class DataType
 {
-    INTEGER,
+    INTEGER = 0,
     REAL,
     CHAR,
     STRING,
     TEXT_FILE,
-    INTERVAL_INTEGER
+    INTERVAL_INTEGER,
+    NN
 };
+
+std::wstring dataTypeName(DataType t);
 
 template <typename T>
 struct IntervalType { using Type = T; };
@@ -51,47 +54,54 @@ public:
     void changeName(std::wstring name);
 
     virtual DataType dateType() const = 0;
+    virtual std::unique_ptr<VirtualColumnInfo> clone() const = 0;
 private:
     std::wstring fName;
 };
 
-} // core
-
-namespace detail
+constexpr bool isIntervalType(core::DataType type) noexcept
 {
-    constexpr bool isIntervalType(core::DataType type) noexcept
-    {
-        return type == core::DataType::INTERVAL_INTEGER;
-    }
-} // detail
+    return type == core::DataType::INTERVAL_INTEGER;
+}
 
-namespace core
-{
-
-template <DataType type> requires (!detail::isIntervalType(type))
-class ColumnInfo : VirtualColumnInfo
+class ColumnInfo: public VirtualColumnInfo
 {
     using Super = VirtualColumnInfo;
+    using This  = ColumnInfo;
 public:
-    using Super::Super;
+    explicit ColumnInfo(DataType type, std::wstring name);
 
-    DataType dateType() const final { return type; }
+    DataType dateType() const final;
+    std::unique_ptr<VirtualColumnInfo> clone() const final;
+private:
+    const DataType fType;
 };
 
-template <typename T>
+template <DataType DataT> requires (isIntervalType(DataT))
 class IntervalColumnInfo : public VirtualColumnInfo
 {
-    using Super = VirtualColumnInfo;
+    using Super  = VirtualColumnInfo;
+    using ValueT = typename column_t<DataT>::Type;
+    using This   = IntervalColumnInfo<DataT>;
 public:
-    explicit IntervalColumnInfo(T fLowerLimit, T upperLimit, std::wstring name)
+    explicit IntervalColumnInfo(ValueT fLowerLimit, ValueT upperLimit, std::wstring name)
         : Super{std::move(name)}, fLowerLimit{fLowerLimit}, fUpperLimit{upperLimit} {}
 
+    DataType dateType() const final { return DataT; }
+
+    std::unique_ptr<VirtualColumnInfo> clone() const final
+    {
+        return std::make_unique<This>(lowerLimit(), upperLimit(), name());
+    }
+
+    ValueT lowerLimit() const { return fLowerLimit; }
+    ValueT upperLimit() const { return fUpperLimit; }
 private:
-    const T fLowerLimit;
-    const T fUpperLimit;
+    const ValueT fLowerLimit;
+    const ValueT fUpperLimit;
 };
 
-using IntervalIntColumnInfo = IntervalColumnInfo<column_t<DataType::INTERVAL_INTEGER>::Type>;
+using IntervalIntColumnInfo = IntervalColumnInfo<DataType::INTERVAL_INTEGER>;
 
 } // core
 

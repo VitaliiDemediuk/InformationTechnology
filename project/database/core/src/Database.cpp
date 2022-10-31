@@ -74,3 +74,8 @@ bool core::Database::validateTableName(const std::wstring& name) const
 {
     return !name.empty();
 }
+
+bool core::Database::validateColumnName(const std::wstring& name) const
+{
+    return !name.empty();
+}

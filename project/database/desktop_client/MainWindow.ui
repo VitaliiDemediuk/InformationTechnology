@@ -74,14 +74,14 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="addColumnBtn">
               <property name="text">
                <string>Add column</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_2">
+             <widget class="QPushButton" name="addRowBtn">
               <property name="text">
                <string>Add row</string>
               </property>

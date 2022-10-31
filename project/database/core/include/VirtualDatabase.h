@@ -10,7 +10,8 @@ namespace core
 
 using SaveInformation = std::variant<std::filesystem::path>;
 
-class VirtualDatabase: public VirtualTableNameValidator
+class VirtualDatabase: public VirtualTableNameValidator,
+                       public VirtualColumnNameValidator
 {
 public:
 

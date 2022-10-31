@@ -11,12 +11,15 @@ namespace core
 
 class DatabaseClient : public AbstractExecutor,
                        public VirtualTableNameValidator,
-                       public VirtualDatabaseNameValidator
+                       public VirtualDatabaseNameValidator,
+                       public VirtualColumnNameValidator
 {
 public:
     const std::wstring& databaseName() const;
-    bool haveDatabase() const;
+    bool hasDatabase() const;
     void setNewDatabase(std::unique_ptr<VirtualDatabase> db);
+
+    const core::VirtualTable* table(core::TableId id) const;
 
     // AbstractExecutor
     void exec(std::unique_ptr<AbstractCommand> cmd) final;
@@ -24,6 +27,7 @@ public:
     // VirtualValidator
     bool validateDatabaseName(const std::wstring& name) const final;
     bool validateTableName(const std::wstring& name) const final;
+    bool validateColumnName(const std::wstring &name) const final;
 
 protected:
     std::unique_ptr<VirtualDatabase> fDb;

@@ -11,12 +11,13 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        MainWindow.cpp              MainWindow.h              MainWindow.ui
-        DesktopDatabaseClient.cpp   DesktopDatabaseClient.h
-        Dialogs/NewDbDialog.cpp     Dialogs/NewDbDialog.h     Dialogs/NewDbDialog.ui
-        Dialogs/TableNameDialog.cpp Dialogs/TableNameDialog.h Dialogs/TableNameDialog.ui
-        Models/TableListModel.cpp   Models/TableListModel.h
-                                    Models/ResetableModel.h
+        MainWindow.cpp               MainWindow.h               MainWindow.ui
+        DesktopDatabaseClient.cpp    DesktopDatabaseClient.h
+        Dialogs/NewDbDialog.cpp      Dialogs/NewDbDialog.h      Dialogs/NewDbDialog.ui
+        Dialogs/TableNameDialog.cpp  Dialogs/TableNameDialog.h  Dialogs/TableNameDialog.ui
+        Dialogs/ColumnInfoDialog.cpp Dialogs/ColumnInfoDialog.h Dialogs/ColumnInfoDialog.ui
+        Models/TableListModel.cpp    Models/TableListModel.h
+                                     Models/ResetableModel.h
 )
 
 qt_add_executable(DatabaseDesktopClient

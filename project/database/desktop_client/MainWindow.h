@@ -24,10 +24,13 @@ private slots:
     void renameTable();
     void deleteTable();
     void showTableListContextMenu(const QPoint& p);
+    void refreshCurrentTableId(const QModelIndex& index);
+    void addColumn();
 
 private:
     // Methods
     void reenable();
+    void refreshTable();
     void refresh();
 
     // Fields
