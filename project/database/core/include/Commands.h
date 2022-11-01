@@ -97,6 +97,19 @@ private:
     const size_t fRowId;
 };
 
+class EditCell: public AbstractCommand
+{
+public:
+    explicit EditCell(core::TableId tableId, size_t rowId, size_t columnIdx, CellData data);
+
+    void exec(VirtualDatabase& db) final;
+private:
+    const core::TableId fTableId;
+    const size_t fRowId;
+    const size_t fColumnIdx;
+    CellData data;
+};
+
 } // core::command
 
 #endif //COMMANDS_H

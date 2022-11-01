@@ -5,6 +5,9 @@
 #include "NewDbDialog.h"
 #include "TableNameDialog.h"
 #include "ColumnInfoDialog.h"
+
+// Models
+#include "TableListModel.h"
 #include "DbTableModel.h"
 
 // Core
@@ -14,18 +17,21 @@
 
 struct MainWindowData
 {
-    explicit MainWindowData(QWidget* parent)
+    explicit MainWindowData(MainWindow* parent)
         : acRenameTable{"Rename table", parent},
           acDeleteTable{"Delete table", parent},
           acRenameColumn{"Rename column", parent},
           acDeleteColumn{"Delete column", parent},
-          acDeleteRow{"Delete row", parent}
+          acDeleteRow{"Delete row", parent},
+          dbTableDelegate{*parent, parent}
     {}
+
+    std::optional<core::TableId> currentTableId;
 
     desktop::DatabaseClient dbClient;
     desktop::TableListModel tableListModel;
     desktop::DbTableModel dbTableModel;
-    std::optional<core::TableId> currentTableId;
+    desktop::DbTableDelegate dbTableDelegate;
 
     QAction acRenameTable;
     QAction acDeleteTable;
@@ -95,9 +101,24 @@ MainWindow::MainWindow(QWidget *parent)
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
     ui->tableView->setModel(&d->dbTableModel);
+
+    // Set delegates
+    ui->tableView->setItemDelegate(&d->dbTableDelegate);
 }
 
 MainWindow::~MainWindow() = default;
+
+void MainWindow::editCell(size_t rowIdx, size_t columnIdx, core::CellData data)
+{
+    if (!d->currentTableId) {
+        return;
+    }
+
+    const auto rowId = d->dbTableModel.rowId(rowIdx);
+    auto cmd = std::make_unique<core::command::EditCell>(*d->currentTableId, rowId, columnIdx, std::move(data));
+    d->dbClient.exec(std::move(cmd));
+    refreshTable();
+}
 
 /////////////// Private Slots //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -285,6 +306,7 @@ void MainWindow::reenable()
 
 void MainWindow::refreshTable()
 {
+    d->dbTableDelegate.setTable(d->currentTableId ? d->dbClient.table(*d->currentTableId) : nullptr);
     d->dbClient.resetModel(d->currentTableId, d->dbTableModel);
 }
 

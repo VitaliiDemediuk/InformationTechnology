@@ -11,14 +11,15 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        MainWindow.cpp               MainWindow.h               MainWindow.ui
-        DesktopDatabaseClient.cpp    DesktopDatabaseClient.h
-        Dialogs/NewDbDialog.cpp      Dialogs/NewDbDialog.h      Dialogs/NewDbDialog.ui
-        Dialogs/TableNameDialog.cpp  Dialogs/TableNameDialog.h  Dialogs/TableNameDialog.ui
-        Dialogs/ColumnInfoDialog.cpp Dialogs/ColumnInfoDialog.h Dialogs/ColumnInfoDialog.ui
-        Models/TableListModel.cpp    Models/TableListModel.h
-        Models/DbTableModel.cpp      Models/DbTableModel.h
-                                     Models/ResetableModel.h
+        MainWindow.cpp                MainWindow.h               MainWindow.ui
+        DesktopDatabaseClient.cpp     DesktopDatabaseClient.h
+        Dialogs/NewDbDialog.cpp       Dialogs/NewDbDialog.h      Dialogs/NewDbDialog.ui
+        Dialogs/TableNameDialog.cpp   Dialogs/TableNameDialog.h  Dialogs/TableNameDialog.ui
+        Dialogs/ColumnInfoDialog.cpp  Dialogs/ColumnInfoDialog.h Dialogs/ColumnInfoDialog.ui
+        Models/TableListModel.cpp     Models/TableListModel.h
+        Models/DbTableModel.cpp       Models/DbTableModel.h
+        Delegates/DbTableDelegate.cpp Delegates/DbTableDelegate.h
+                                      Models/ResetableModel.h
 )
 
 qt_add_executable(DatabaseDesktopClient
@@ -32,6 +33,7 @@ target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_
 
 target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Dialogs)
 target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Models)
+target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Delegates)
 
 set_target_properties(DatabaseDesktopClient PROPERTIES
     CXX_STANDARD 20

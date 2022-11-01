@@ -73,7 +73,7 @@ int desktop::ColumnInfoDialog::exec(std::unique_ptr<core::VirtualColumnInfo>& co
     const auto type = static_cast<core::DataType>(ui->typeComboBox->currentIndex());
     auto name = ui->lineEdNewName->text().trimmed().toStdWString();
     if (core::isIntervalType(type)) {
-        columnInfo = std::make_unique<core::IntervalIntColumnInfo>(ui->lowerSpinBox->value(), ui->lowerSpinBox->value(), std::move(name));
+        columnInfo = std::make_unique<core::IntervalIntColumnInfo>(ui->lowerSpinBox->value(), ui->upperSpinBox->value(), std::move(name));
     } else {
         columnInfo = std::make_unique<core::ColumnInfo>(type, std::move(name));
     }

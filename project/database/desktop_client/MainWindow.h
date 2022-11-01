@@ -5,18 +5,22 @@
 #include <QMainWindow>
 
 // Local
-#include "TableListModel.h"
 #include "DesktopDatabaseClient.h"
+#include "DbTableDelegate.h"
 
 namespace Ui { class MainWindow; }
 
-class MainWindow: public QMainWindow
+class MainWindow: public QMainWindow,
+                  public desktop::DbCellEditor
 {
 Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
+
+    // desktop::DbCellEditor
+    void editCell(size_t rowIdx, size_t columnIdx, core::CellData data) final;
 
 private slots:
     void createNewDatabase();

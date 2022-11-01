@@ -82,3 +82,13 @@ void core::command::DeleteRow::exec(VirtualDatabase& db)
 {
     db.table(fTableId).deleteRow(fRowId);
 }
+
+/////////////// EditCell ///////////////////////////////////////////////////////////////////////////////////////////////
+
+core::command::EditCell::EditCell(core::TableId tableId, size_t rowId, size_t columnIdx, CellData data)
+    : fTableId{tableId}, fRowId{rowId}, fColumnIdx{columnIdx}, data{std::move(data)} {}
+
+void core::command::EditCell::exec(VirtualDatabase& db)
+{
+    db.table(fTableId).setNewValue(fRowId, fColumnIdx, std::move(data));
+}

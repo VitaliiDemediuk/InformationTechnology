@@ -1,5 +1,10 @@
 #include "DbTableModel.h"
 
+// Qt
+#include <QBrush>
+#include <QStyle>
+#include <QApplication>
+
 namespace {
 
 // helper type for the visitor #4
@@ -13,7 +18,7 @@ QVariant toQVariant(const core::CellData& cellData)
     std::visit(overloaded {
         [&res] (const std::monostate& value) { res = QVariant{}; },
         [&res] (const core::column_t<core::DataType::INTEGER>& value) { res = value; },
-        [&res] (const core::column_t<core::DataType::REAL>& value) { res = value; },
+        [&res] (const core::column_t<core::DataType::REAL>& value) { res = QString::number(value).replace('.', ','); },
         [&res] (const core::column_t<core::DataType::CHAR>& value) { res = QChar{value}; },
         [&res] (const core::column_t<core::DataType::STRING>& value) { res = QString::fromStdWString(value); },
         [&res] (const core::column_t<core::DataType::TEXT_FILE>& value) { res = QString::fromStdWString(value.wstring()); },
@@ -37,14 +42,14 @@ int desktop::DbTableModel::rowCount(const QModelIndex &parent) const
 
 int desktop::DbTableModel::columnCount(const QModelIndex &parent) const
 {
-    return columnNames.size();
+    return columnsInfo.size();
 }
 
 QVariant desktop::DbTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole) {
         if (orientation == Qt::Horizontal) {
-            return columnNames.at(section);
+            return columnsInfo.at(section).name;
         }
     }
     return Super::headerData(section, orientation, role);
@@ -52,31 +57,67 @@ QVariant desktop::DbTableModel::headerData(int section, Qt::Orientation orientat
 
 QVariant desktop::DbTableModel::data(const QModelIndex &index, int role) const
 {
-    if (role == Qt::DisplayRole) {
-        if (index.isValid()) {
-            const auto rowIdx = index.row();
-            const auto columnIdx = index.column();
-            const auto& cell = cells.at(rowIdx).row.at(columnIdx);
+    if (!index.isValid()) {
+        return QVariant{};
+    }
+
+    const auto rowIdx = index.row();
+    const auto columnIdx = index.column();
+    const auto& cell = cells.at(rowIdx).row.at(columnIdx);
+
+    switch (role) {
+        case Qt::DisplayRole: {
             if (cell.isNull()) {
                 return "(empty)";
             }
             return cell;
         }
+        case Qt::ForegroundRole: {
+            if (cell.isNull()) {
+                return QBrush(QColor(192,192,192, 200)); // Gray
+            }
+        } break;
+        case Qt::EditRole: {
+            return cell;
+        }
+        case Qt::DecorationRole: {
+            if (columnsInfo.at(columnIdx).needFileIcon) {
+                return QApplication::style()->standardIcon(QStyle::SP_FileIcon);
+            } break;
+        }
+        default: {}
     }
+
     return QVariant{};
+}
+
+Qt::ItemFlags desktop::DbTableModel::flags(const QModelIndex &index) const
+{
+    const auto superFlags = Super::flags(index);
+
+    if (!index.isValid()) {
+        return superFlags;
+    }
+
+    if (columnsInfo.at(index.column()).isEditable) {
+        return superFlags | Qt::ItemIsEditable;
+    }
+    return superFlags;
 }
 
 void desktop::DbTableModel::reset(const core::VirtualTable* table)
 {
     beginResetModel();
-    columnNames.clear();
+    columnsInfo.clear();
     cells.clear();
     if (table) {
         const auto count = table->columnCount();
-        columnNames.reserve(count);
+        columnsInfo.reserve(count);
         for (size_t i = 0; i < count; ++i) {
             const auto& column = table->column(i);
-            columnNames.push_back(QString::fromStdWString(column.name()));
+            columnsInfo.emplace_back(ColumnInfo{.isEditable = column.isEditable(),
+                                                .needFileIcon = column.dateType() == core::DataType::TEXT_FILE,
+                                                .name = QString::fromStdWString(column.name())});
         }
 
         cells.reserve(table->rowCount());
@@ -84,7 +125,7 @@ void desktop::DbTableModel::reset(const core::VirtualTable* table)
             auto& modelRow = cells.emplace_back(id).row;
             modelRow.reserve(row.size());
             for (const auto& cell : row) {
-                modelRow.push_back(toQVariant(cell));
+                modelRow.emplace_back(toQVariant(cell));
             }
         });
     }
