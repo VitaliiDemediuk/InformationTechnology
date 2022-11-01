@@ -65,6 +65,9 @@ size_t core::CustomTable::columnCount() const
 void core::CustomTable::createColumn(std::unique_ptr<VirtualColumnInfo> info)
 {
     fColumns.push_back(std::move(info));
+    for (auto& [_, row] : fTable) {
+        row.emplace_back();
+    }
 }
 
 void core::CustomTable::deleteColumn(size_t idx)
