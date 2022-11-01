@@ -39,7 +39,7 @@ public:
     size_t createRow() final;
     void deleteRow(size_t id) final;
     void setNewValue(size_t rowId, size_t columnIdx, CellData data) final;
-    void forAllRow(std::function<void(const Row&)> worker) const final;
+    void forAllRow(std::function<void(size_t id, const Row&)> worker) const final;
 
 private:
     std::atomic<size_t> lastId = 1;

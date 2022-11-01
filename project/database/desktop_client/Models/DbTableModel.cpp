@@ -23,6 +23,11 @@ QVariant toQVariant(const core::CellData& cellData)
     return res;
 }
 
+} // detail
+
+size_t desktop::DbTableModel::rowId(int rowIdx) const
+{
+    return cells.at(rowIdx).id;
 }
 
 int desktop::DbTableModel::rowCount(const QModelIndex &parent) const
@@ -51,7 +56,7 @@ QVariant desktop::DbTableModel::data(const QModelIndex &index, int role) const
         if (index.isValid()) {
             const auto rowIdx = index.row();
             const auto columnIdx = index.column();
-            const auto& cell = cells.at(rowIdx).at(columnIdx);
+            const auto& cell = cells.at(rowIdx).row.at(columnIdx);
             if (cell.isNull()) {
                 return "(empty)";
             }
@@ -75,8 +80,8 @@ void desktop::DbTableModel::reset(const core::VirtualTable* table)
         }
 
         cells.reserve(table->rowCount());
-        table->forAllRow([this] (const core::Row& row) {
-            auto& modelRow = cells.emplace_back();
+        table->forAllRow([this] (size_t id, const core::Row& row) {
+            auto& modelRow = cells.emplace_back(id).row;
             modelRow.reserve(row.size());
             for (const auto& cell : row) {
                 modelRow.push_back(toQVariant(cell));

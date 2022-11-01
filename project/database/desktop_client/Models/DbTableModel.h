@@ -20,6 +20,8 @@ class DbTableModel: public QAbstractTableModel,
 public:
     using Super::Super;
 
+    size_t rowId(int rowIdx) const;
+
     // QAbstractTableModel
     int rowCount(const QModelIndex &parent = QModelIndex()) const final;
     int columnCount(const QModelIndex &parent = QModelIndex()) const final;
@@ -32,7 +34,14 @@ public:
 private:
     core::TableId tableId;
     std::vector<QString> columnNames;
-    std::vector<std::vector<QVariant>> cells;
+
+    struct ModelRowData {
+        explicit ModelRowData(size_t id) : id(id) {}
+
+        const size_t id;
+        std::vector<QVariant> row;
+    };
+    std::vector<ModelRowData> cells;
 };
 
 } // desktop

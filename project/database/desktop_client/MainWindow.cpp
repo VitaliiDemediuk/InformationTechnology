@@ -15,17 +15,29 @@
 struct MainWindowData
 {
     explicit MainWindowData(QWidget* parent)
-        : acRenameTable{"Rename", parent},
-          acDeleteTable{"Delete", parent}
+        : acRenameTable{"Rename table", parent},
+          acDeleteTable{"Delete table", parent},
+          acRenameColumn{"Rename column", parent},
+          acDeleteColumn{"Delete column", parent},
+          acDeleteRow{"Delete row", parent}
     {}
 
     desktop::DatabaseClient dbClient;
     desktop::TableListModel tableListModel;
     desktop::DbTableModel dbTableModel;
+    std::optional<core::TableId> currentTableId;
+
     QAction acRenameTable;
     QAction acDeleteTable;
-    int lastTableListIdx = -1;
-    std::optional<core::TableId> currentTableId;
+    QAction acRenameColumn;
+    QAction acDeleteColumn;
+    QAction acDeleteRow;
+
+    struct CombosData {
+        int tableListIdx = -1;
+        int columnIdx = -1;
+        int rowIdx = -1;
+    } combosData;
 };
 
 MainWindow::MainWindow(QWidget *parent)
@@ -53,6 +65,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&d->acRenameTable, &QAction::triggered, this, &MainWindow::renameTable);
     connect(&d->acDeleteTable, &QAction::triggered, this, &MainWindow::deleteTable);
+    connect(&d->acRenameColumn, &QAction::triggered, this, &MainWindow::renameColumn);
+    connect(&d->acDeleteColumn, &QAction::triggered, this, &MainWindow::deleteColumn);
+    connect(&d->acDeleteRow, &QAction::triggered, this, &MainWindow::deleteRow);
 
     ui->tableListView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableListView, &QListView::customContextMenuRequested, this, &MainWindow::showTableListContextMenu);
@@ -70,6 +85,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->addColumnBtn, &QPushButton::clicked, this, &MainWindow::addColumn);
     connect(ui->addRowBtn,    &QPushButton::clicked, this, &MainWindow::addRow);
+
+    ui->tableView->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableView->horizontalHeader(), &QTableView::customContextMenuRequested, this, &MainWindow::showHorizontalHeaderContextMenu);
+    connect(ui->tableView->verticalHeader(), &QTableView::customContextMenuRequested, this, &MainWindow::showVerticalHeaderContextMenu);
+    ui->tableView->verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+
 
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
@@ -105,7 +126,11 @@ void MainWindow::createNewTable()
 
 void MainWindow::renameTable()
 {
-    const auto idx = d->lastTableListIdx;
+    if (d->combosData.tableListIdx < 0) {
+        return;
+    }
+
+    const auto idx = d->combosData.tableListIdx;
     const auto dbName = d->tableListModel.data(d->tableListModel.index(idx, 0)).toString().toStdWString();
 
     desktop::TableNameDialog dialog(d->dbClient, this);
@@ -118,15 +143,55 @@ void MainWindow::renameTable()
 
 void MainWindow::deleteTable()
 {
-    if (d->lastTableListIdx >= 0) {
-        auto cmd = std::make_unique<core::command::DeleteTable>(d->tableListModel.tableId(d->lastTableListIdx));
+    if (d->combosData.tableListIdx >= 0) {
+        auto cmd = std::make_unique<core::command::DeleteTable>(d->tableListModel.tableId(d->combosData.tableListIdx));
         d->dbClient.exec(std::move(cmd));
         refresh();
         if (const auto rowCount = d->tableListModel.rowCount(); rowCount > 0) {
-            const auto index = d->tableListModel.index(std::min(rowCount - 1, d->lastTableListIdx), 0);
+            const auto index = d->tableListModel.index(std::min(rowCount - 1, d->combosData.tableListIdx), 0);
             ui->tableListView->setCurrentIndex(index);
             refreshCurrentTableId(index);
         }
+    }
+}
+
+void MainWindow::renameColumn()
+{
+    if (d->combosData.columnIdx < 0 || !d->currentTableId) {
+        return;
+    }
+
+    const auto tableId = d->currentTableId.value();
+    const auto colIdx = d->combosData.columnIdx;
+
+    const auto& columnInfo = d->dbClient.table(tableId)->column(colIdx);
+    desktop::ColumnInfoDialog dialog{d->dbClient, this};
+    if (std::wstring newName; dialog.exec(columnInfo, newName)) {
+        auto cmd = std::make_unique<core::command::RenameColumn>(tableId, colIdx, std::move(newName));
+        d->dbClient.exec(std::move(cmd));
+        refreshTable();
+        reenable();
+    }
+}
+
+void MainWindow::deleteColumn()
+{
+    if (d->combosData.columnIdx >= 0 and d->currentTableId) {
+        auto cmd = std::make_unique<core::command::DeleteColumn>(d->currentTableId.value(), d->combosData.columnIdx);
+        d->dbClient.exec(std::move(cmd));
+        refreshTable();
+        reenable();
+    }
+}
+
+void MainWindow::deleteRow()
+{
+    if (d->combosData.rowIdx >= 0 and d->currentTableId) {
+        auto cmd = std::make_unique<core::command::DeleteRow>(d->currentTableId.value(),
+                                                              d->dbTableModel.rowId(d->combosData.rowIdx));
+        d->dbClient.exec(std::move(cmd));
+        refreshTable();
+        reenable();
     }
 }
 
@@ -137,8 +202,38 @@ void MainWindow::showTableListContextMenu(const QPoint& p)
     tableListContextMenu.addAction(&d->acRenameTable);
     tableListContextMenu.addAction(&d->acDeleteTable);
 
-    d->lastTableListIdx = ui->tableListView->indexAt(p).row();
+    d->combosData.tableListIdx= ui->tableListView->indexAt(p).row();
     tableListContextMenu.exec(ui->tableListView->mapToGlobal(p));
+}
+
+void MainWindow::showHorizontalHeaderContextMenu(const QPoint& p)
+{
+    QMenu tableListContextMenu("Horizontal header context menu", this);
+
+    const auto* headerView = ui->tableView->horizontalHeader();
+    const auto colIdx = d->combosData.columnIdx = headerView->logicalIndexAt(p);
+
+    d->acRenameColumn.setEnabled(colIdx > 0);
+    d->acDeleteColumn.setEnabled(colIdx > 0);
+
+    tableListContextMenu.addAction(&d->acRenameColumn);
+    tableListContextMenu.addAction(&d->acDeleteColumn);
+
+    tableListContextMenu.exec(headerView->mapToGlobal(p));
+}
+
+void MainWindow::showVerticalHeaderContextMenu(const QPoint& p)
+{
+    QMenu tableListContextMenu("Vertical header context menu", this);
+
+    const auto* verticalView = ui->tableView->verticalHeader();
+    const auto rowIdx = d->combosData.rowIdx = verticalView->logicalIndexAt(p);
+
+    d->acRenameColumn.setEnabled(rowIdx > 0);
+
+    tableListContextMenu.addAction(&d->acDeleteRow);
+
+    tableListContextMenu.exec(verticalView->mapToGlobal(p));
 }
 
 void MainWindow::refreshCurrentTableId(const QModelIndex& index)

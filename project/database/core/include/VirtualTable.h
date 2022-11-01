@@ -36,7 +36,7 @@ public:
     virtual size_t createRow() = 0;
     virtual void deleteRow(size_t idx) = 0;
     virtual void setNewValue(size_t rowIdx, size_t columnIdx, CellData data) = 0;
-    virtual void forAllRow(std::function<void(const Row&)> worker) const = 0;
+    virtual void forAllRow(std::function<void(size_t id, const Row&)> worker) const = 0;
 
 
     virtual ~VirtualTable() = default;

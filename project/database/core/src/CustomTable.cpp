@@ -133,10 +133,10 @@ void core::CustomTable::setNewValue(size_t rowId, size_t columnIdx, CellData dat
     row.at(columnIdx) = std::move(data);
 }
 
-void core::CustomTable::forAllRow(std::function<void(const Row&)> worker) const
+void core::CustomTable::forAllRow(std::function<void(size_t id, const Row&)> worker) const
 {
-    for (const auto& [_, row] : fTable) {
-        worker(row);
+    for (const auto& [id, row] : fTable) {
+        worker(id, row);
     }
 }
 

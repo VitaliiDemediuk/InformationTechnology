@@ -23,7 +23,12 @@ private slots:
     void createNewTable();
     void renameTable();
     void deleteTable();
+    void renameColumn();
+    void deleteColumn();
+    void deleteRow();
     void showTableListContextMenu(const QPoint& p);
+    void showHorizontalHeaderContextMenu(const QPoint& p);
+    void showVerticalHeaderContextMenu(const QPoint& p);
     void refreshCurrentTableId(const QModelIndex& index);
     void addColumn();
     void addRow();
