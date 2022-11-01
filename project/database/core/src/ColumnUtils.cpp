@@ -23,7 +23,7 @@ core::VirtualColumnInfo::VirtualColumnInfo(std::wstring name)
 }
 
 
-const std::wstring& core::VirtualColumnInfo::name() const noexcept
+const std::wstring &core::VirtualColumnInfo::name() const noexcept
 {
     return fName;
 }
@@ -49,4 +49,9 @@ core::DataType core::ColumnInfo::dateType() const
 auto core::ColumnInfo::clone() const -> std::unique_ptr<VirtualColumnInfo>
 {
     return std::make_unique<This>(dateType(), name());
+}
+
+bool core::ColumnInfo::isEditable() const
+{
+    return true;
 }

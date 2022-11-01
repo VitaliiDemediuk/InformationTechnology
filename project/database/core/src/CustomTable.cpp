@@ -8,8 +8,31 @@
         BOOST_THROW_EXCEPTION(std::logic_error("Invalid column index!")); \
     }
 
+namespace detail
+{
+
+class IdColumnInfo: public core::VirtualColumnInfo
+{
+    using Super = VirtualColumnInfo;
+    using This = IdColumnInfo;
+public:
+    explicit IdColumnInfo() : Super{L"Id"} {}
+
+    core::DataType dateType() const final
+    { return core::DataType::INTEGER; }
+    std::unique_ptr<VirtualColumnInfo> clone() const final
+    { return std::make_unique<IdColumnInfo>(); }
+    bool isEditable() const final
+    { return false; }
+};
+
+}
+
 core::CustomTable::CustomTable(TableId id, std::wstring name)
-    : fId{id}, fName{std::move(name)} {}
+    : fId{id}, fName{std::move(name)}
+{
+    createColumn(std::make_unique<detail::IdColumnInfo>());
+}
 
 core::TableId core::CustomTable::id() const
 {
@@ -45,7 +68,14 @@ void core::CustomTable::createColumn(std::unique_ptr<VirtualColumnInfo> info)
 void core::CustomTable::deleteColumn(size_t idx)
 {
     CHECK_COLUMN_INDEX(idx, fColumns)
-    fColumns.erase(fColumns.begin() + idx);
+    auto it = fColumns.begin() + idx;
+    if (!(*it)->isEditable()) {
+        BOOST_THROW_EXCEPTION(std::logic_error("This column is not editable!"));
+    }
+    fColumns.erase(it);
+    for (auto& [_, row] : fTable) {
+        row.erase(row.begin() + idx);
+    }
 }
 
 void core::CustomTable::editColumnName(size_t idx, std::wstring name)

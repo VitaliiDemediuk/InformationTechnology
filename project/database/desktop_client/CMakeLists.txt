@@ -17,6 +17,7 @@ set(PROJECT_SOURCES
         Dialogs/TableNameDialog.cpp  Dialogs/TableNameDialog.h  Dialogs/TableNameDialog.ui
         Dialogs/ColumnInfoDialog.cpp Dialogs/ColumnInfoDialog.h Dialogs/ColumnInfoDialog.ui
         Models/TableListModel.cpp    Models/TableListModel.h
+        Models/DbTableModel.cpp      Models/DbTableModel.h
                                      Models/ResetableModel.h
 )
 

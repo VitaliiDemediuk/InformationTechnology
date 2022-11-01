@@ -55,6 +55,8 @@ public:
 
     virtual DataType dateType() const = 0;
     virtual std::unique_ptr<VirtualColumnInfo> clone() const = 0;
+    // can edit row data
+    virtual bool isEditable() const = 0;
 private:
     std::wstring fName;
 };
@@ -73,6 +75,7 @@ public:
 
     DataType dateType() const final;
     std::unique_ptr<VirtualColumnInfo> clone() const final;
+    bool isEditable() const final;
 private:
     const DataType fType;
 };
@@ -93,6 +96,7 @@ public:
     {
         return std::make_unique<This>(lowerLimit(), upperLimit(), name());
     }
+    bool isEditable() const final { return true; }
 
     ValueT lowerLimit() const { return fLowerLimit; }
     ValueT upperLimit() const { return fUpperLimit; }

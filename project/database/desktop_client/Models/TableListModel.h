@@ -14,7 +14,7 @@ namespace desktop
 {
 
 class TableListModel: public QAbstractListModel,
-                      public ResetableModel
+                      public DbResetableModel
 {
 public:
     core::TableId tableId(size_t idx) const;

@@ -1,6 +1,9 @@
 #ifndef DESKTOPDATABASECLIENT_H
 #define DESKTOPDATABASECLIENT_H
 
+// STL
+#include <optional>
+
 // Core
 #include "DatabaseClient.h"
 
@@ -14,7 +17,8 @@ class DatabaseClient: public core::DatabaseClient
 {
     using Super = core::DatabaseClient;
 public:
-    void resetModel(desktop::ResetableModel& model) const;
+    void resetModel(desktop::DbResetableModel& model) const;
+    void resetModel(std::optional<core::TableId> tableId, desktop::TableResetableModel& model) const;
 };
 
 } // desktop

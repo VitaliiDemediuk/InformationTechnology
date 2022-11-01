@@ -5,13 +5,12 @@
 #include "NewDbDialog.h"
 #include "TableNameDialog.h"
 #include "ColumnInfoDialog.h"
+#include "DbTableModel.h"
 
 // Core
 #include "CustomTable.h"
 #include "Database.h"
 #include "Commands.h"
-
-#include <iostream>
 
 struct MainWindowData
 {
@@ -22,6 +21,7 @@ struct MainWindowData
 
     desktop::DatabaseClient dbClient;
     desktop::TableListModel tableListModel;
+    desktop::DbTableModel dbTableModel;
     QAction acRenameTable;
     QAction acDeleteTable;
     int lastTableListIdx = -1;
@@ -72,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
+    ui->tableView->setModel(&d->dbTableModel);
 }
 
 MainWindow::~MainWindow() = default;
@@ -174,13 +175,13 @@ void MainWindow::reenable()
 
     if (d->currentTableId) {
         const auto* table = d->dbClient.table(d->currentTableId.value());
-        ui->addRowBtn->setEnabled(table && table->columnCount() > 0);
+        ui->addRowBtn->setEnabled(table && table->columnCount() > 1);
     }
 }
 
 void MainWindow::refreshTable()
 {
-
+    d->dbClient.resetModel(d->currentTableId, d->dbTableModel);
 }
 
 void MainWindow::refresh()
