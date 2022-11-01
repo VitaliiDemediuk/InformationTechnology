@@ -22,13 +22,16 @@ enum class DataType
 std::wstring dataTypeName(DataType t);
 
 template <typename T>
-struct IntervalType { using Type = T; };
+struct IntervalType {
+    using Type = T;
+    Type data{};
+};
 
 template <DataType type>
 struct ColumnTypeTrait {};
 
 template<> struct ColumnTypeTrait<DataType::INTEGER>          { using Type = long long int; };
-template<> struct ColumnTypeTrait<DataType::REAL>             { using Type = long double; };
+template<> struct ColumnTypeTrait<DataType::REAL>             { using Type = double; };
 template<> struct ColumnTypeTrait<DataType::CHAR>             { using Type = wchar_t; };
 template<> struct ColumnTypeTrait<DataType::STRING>           { using Type = std::wstring; };
 template<> struct ColumnTypeTrait<DataType::TEXT_FILE>        { using Type = std::filesystem::path; };
@@ -37,7 +40,8 @@ template<> struct ColumnTypeTrait<DataType::INTERVAL_INTEGER> { using Type = Int
 template<DataType type>
 using column_t = typename ColumnTypeTrait<type>::Type;
 
-using CellData = std::variant<column_t<DataType::INTEGER>,
+using CellData = std::variant<std::monostate,
+                              column_t<DataType::INTEGER>,
                               column_t<DataType::REAL>,
                               column_t<DataType::CHAR>,
                               column_t<DataType::STRING>,

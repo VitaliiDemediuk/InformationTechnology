@@ -106,7 +106,7 @@ size_t core::CustomTable::rowCount() const
 size_t core::CustomTable::createRow()
 {
     const auto id = lastId++;
-    auto newRow = Row{columnCount()};
+    auto newRow = Row{columnCount(), CellData{}};
 
     newRow.at(0) = column_t<detail::IdColumnInfo::DataT>(id);
     fTable[id] = std::move(newRow);
