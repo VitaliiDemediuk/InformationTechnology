@@ -43,3 +43,12 @@ void core::command::AddColumn::exec(VirtualDatabase& db)
 {
     db.table(fId).createColumn(std::move(fColumnInfo));
 }
+
+/////////////// AddRow /////////////////////////////////////////////////////////////////////////////////////////////////
+
+core::command::AddRow::AddRow(core::TableId id) : fId{id} {}
+
+void core::command::AddRow::exec(VirtualDatabase& db)
+{
+    db.table(fId).createRow();
+}

@@ -50,6 +50,16 @@ private:
     std::unique_ptr<core::VirtualColumnInfo> fColumnInfo;
 };
 
+class AddRow: public AbstractCommand
+{
+public:
+    explicit AddRow(core::TableId id);
+
+    void exec(VirtualDatabase& db) final;
+private:
+    const core::TableId fId;
+};
+
 } // core::command
 
 #endif //COMMANDS_H

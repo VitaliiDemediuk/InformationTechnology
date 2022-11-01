@@ -32,6 +32,7 @@ public:
 private:
     core::TableId tableId;
     std::vector<QString> columnNames;
+    std::vector<std::vector<QVariant>> cells;
 };
 
 } // desktop

@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(ui->addColumnBtn, &QPushButton::clicked, this, &MainWindow::addColumn);
+    connect(ui->addRowBtn,    &QPushButton::clicked, this, &MainWindow::addRow);
 
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
@@ -163,6 +164,14 @@ void MainWindow::addColumn()
         refreshTable();
         reenable();
     }
+}
+
+void MainWindow::addRow()
+{
+    auto cmd = std::make_unique<core::command::AddRow>(d->currentTableId.value());
+    d->dbClient.exec(std::move(cmd));
+    refreshTable();
+    reenable();
 }
 
 /////////////// Private ////////////////////////////////////////////////////////////////////////////////////////////////

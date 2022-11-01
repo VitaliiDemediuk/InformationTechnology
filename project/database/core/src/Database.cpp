@@ -42,7 +42,7 @@ const core::VirtualTable& core::Database::table(TableId id) const
     return *it->second;
 }
 
-auto core::Database::forAllTable(std::function<void(const VirtualTable&)> worker) const -> const VirtualTable&
+void core::Database::forAllTable(std::function<void(const VirtualTable&)> worker) const
 {
     for (const auto& [_, table] : fTables) {
         worker(*table);

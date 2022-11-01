@@ -37,14 +37,14 @@ template<> struct ColumnTypeTrait<DataType::INTERVAL_INTEGER> { using Type = Int
 template<DataType type>
 using column_t = typename ColumnTypeTrait<type>::Type;
 
-using ColumnData = std::variant<column_t<DataType::INTEGER>,
-                                column_t<DataType::REAL>,
-                                column_t<DataType::CHAR>,
-                                column_t<DataType::STRING>,
-                                column_t<DataType::TEXT_FILE>,
-                                column_t<DataType::INTERVAL_INTEGER>>;
+using CellData = std::variant<column_t<DataType::INTEGER>,
+                              column_t<DataType::REAL>,
+                              column_t<DataType::CHAR>,
+                              column_t<DataType::STRING>,
+                              column_t<DataType::TEXT_FILE>,
+                              column_t<DataType::INTERVAL_INTEGER>>;
 
-using Row = std::vector<ColumnData>;
+using Row = std::vector<CellData>;
 
 class VirtualColumnInfo {
 public:

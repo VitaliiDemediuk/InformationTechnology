@@ -16,14 +16,16 @@ class IdColumnInfo: public core::VirtualColumnInfo
     using Super = VirtualColumnInfo;
     using This = IdColumnInfo;
 public:
+    constexpr static auto DataT = core::DataType::INTEGER;
+
     explicit IdColumnInfo() : Super{L"Id"} {}
 
     core::DataType dateType() const final
-    { return core::DataType::INTEGER; }
+        { return DataT; }
     std::unique_ptr<VirtualColumnInfo> clone() const final
-    { return std::make_unique<IdColumnInfo>(); }
+        { return std::make_unique<IdColumnInfo>(); }
     bool isEditable() const final
-    { return false; }
+        { return false; }
 };
 
 }
@@ -98,10 +100,15 @@ size_t core::CustomTable::rowCount() const
     return fTable.size();
 }
 
-size_t core::CustomTable::addRow(Row&& data)
+size_t core::CustomTable::createRow()
 {
-    static size_t lastKey = 1;
-    fTable[lastKey++] = std::move(data);
+    const auto id = lastId++;
+    auto newRow = Row{columnCount()};
+
+    newRow.at(0) = column_t<detail::IdColumnInfo::DataT>(id);
+    fTable[id] = std::move(newRow);
+
+    return id;
 }
 
 void core::CustomTable::deleteRow(size_t key)
@@ -113,13 +120,21 @@ void core::CustomTable::deleteRow(size_t key)
     fTable.erase(it);
 }
 
-void core::CustomTable::editRow(size_t key, const std::function<void(Row&)>& worker)
+void core::CustomTable::setNewValue(size_t key, size_t columnIdx, CellData data)
 {
     auto it = fTable.find(key);
     if (it == fTable.end()) {
         BOOST_THROW_EXCEPTION(std::logic_error("Invalid row key!"));
     }
-    worker(it->second);
+    auto& row = it->second;
+    row.at(columnIdx) = std::move(data);
+}
+
+void core::CustomTable::forAllRow(std::function<void(const Row&)> worker) const
+{
+    for (const auto& [_, row] : fTable) {
+        worker(row);
+    }
 }
 
 core::FactoryType core::CustomTableFactory::type() const

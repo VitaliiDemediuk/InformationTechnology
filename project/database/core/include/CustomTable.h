@@ -3,6 +3,7 @@
 
 // STL
 #include <map>
+#include <atomic>
 
 // Local
 #include "VirtualTable.h"
@@ -35,11 +36,13 @@ public:
     size_t rowCount() const final;
 
     // Row operations
-    size_t addRow(Row&& data) final;
+    size_t createRow() final;
     void deleteRow(size_t key) final;
-    void editRow(size_t key, const std::function<void(Row&)>& worker) final;
+    void setNewValue(size_t rowIdx, size_t columnIdx, CellData data) final;
+    void forAllRow(std::function<void(const Row&)> worker) const final;
 
 private:
+    std::atomic<size_t> lastId = 1;
     const TableId fId;
     std::wstring fName;
     std::vector<std::unique_ptr<VirtualColumnInfo>> fColumns;

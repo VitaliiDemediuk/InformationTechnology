@@ -24,7 +24,7 @@ public:
     // Table operations
     virtual VirtualTable& table(TableId id) = 0;
     virtual const VirtualTable& table(TableId id) const = 0;
-    virtual const VirtualTable& forAllTable(std::function<void(const VirtualTable&)> worker) const = 0;
+    virtual void forAllTable(std::function<void(const VirtualTable&)> worker) const = 0;
 
     virtual VirtualTable& createTable(std::wstring name) = 0;
     virtual void deleteTable(TableId id) = 0;

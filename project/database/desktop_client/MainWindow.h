@@ -26,6 +26,7 @@ private slots:
     void showTableListContextMenu(const QPoint& p);
     void refreshCurrentTableId(const QModelIndex& index);
     void addColumn();
+    void addRow();
 
 private:
     // Methods
