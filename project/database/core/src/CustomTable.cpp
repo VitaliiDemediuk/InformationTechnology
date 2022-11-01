@@ -114,18 +114,18 @@ size_t core::CustomTable::createRow()
     return id;
 }
 
-void core::CustomTable::deleteRow(size_t key)
+void core::CustomTable::deleteRow(size_t id)
 {
-    const auto it = fTable.find(key);
+    const auto it = fTable.find(id);
     if (it == fTable.end()) {
         BOOST_THROW_EXCEPTION(std::logic_error("Invalid row key!"));
     }
     fTable.erase(it);
 }
 
-void core::CustomTable::setNewValue(size_t key, size_t columnIdx, CellData data)
+void core::CustomTable::setNewValue(size_t rowId, size_t columnIdx, CellData data)
 {
-    auto it = fTable.find(key);
+    auto it = fTable.find(rowId);
     if (it == fTable.end()) {
         BOOST_THROW_EXCEPTION(std::logic_error("Invalid row key!"));
     }

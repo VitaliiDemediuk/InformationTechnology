@@ -29,7 +29,7 @@ public:
     virtual void editColumnName(size_t idx, std::wstring name) = 0;
 
     // Row info
-    virtual const Row& row(size_t idx) const = 0;
+    virtual const Row& row(size_t id) const = 0;
     virtual size_t rowCount() const = 0;
 
     // Row operations

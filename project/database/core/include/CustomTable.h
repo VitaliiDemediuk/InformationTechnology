@@ -37,8 +37,8 @@ public:
 
     // Row operations
     size_t createRow() final;
-    void deleteRow(size_t key) final;
-    void setNewValue(size_t rowIdx, size_t columnIdx, CellData data) final;
+    void deleteRow(size_t id) final;
+    void setNewValue(size_t rowId, size_t columnIdx, CellData data) final;
     void forAllRow(std::function<void(const Row&)> worker) const final;
 
 private:

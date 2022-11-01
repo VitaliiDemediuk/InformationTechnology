@@ -50,6 +50,32 @@ private:
     std::unique_ptr<core::VirtualColumnInfo> fColumnInfo;
 };
 
+class RenameColumn: public AbstractCommand
+{
+public:
+    explicit RenameColumn(core::TableId id, size_t columnIdx, std::wstring newName);
+
+    void exec(VirtualDatabase& db) final;
+
+private:
+    const core::TableId fId;
+    const size_t fColumnIdx;
+    std::wstring fNewName;
+};
+
+class DeleteColumn: public AbstractCommand
+{
+public:
+    explicit DeleteColumn(core::TableId id, size_t columnIdx);
+
+    void exec(VirtualDatabase& db) final;
+
+private:
+    const core::TableId fId;
+    const size_t fColumnIdx;
+    std::wstring newName;
+};
+
 class AddRow: public AbstractCommand
 {
 public:
@@ -58,6 +84,17 @@ public:
     void exec(VirtualDatabase& db) final;
 private:
     const core::TableId fId;
+};
+
+class DeleteRow: public AbstractCommand
+{
+public:
+    explicit DeleteRow(core::TableId tableId, size_t rowId);
+
+    void exec(VirtualDatabase& db) final;
+private:
+    const core::TableId fTableId;
+    const size_t fRowId;
 };
 
 } // core::command

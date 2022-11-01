@@ -44,6 +44,26 @@ void core::command::AddColumn::exec(VirtualDatabase& db)
     db.table(fId).createColumn(std::move(fColumnInfo));
 }
 
+/////////////// RenameColumn ///////////////////////////////////////////////////////////////////////////////////////////
+
+core::command::RenameColumn::RenameColumn(core::TableId id, size_t columnIdx, std::wstring newName)
+    : fId{id}, fColumnIdx{columnIdx}, fNewName{std::move(newName)} {}
+
+void core::command::RenameColumn::exec(VirtualDatabase& db)
+{
+    db.table(fId).editColumnName(fColumnIdx, std::move(fNewName));
+}
+
+/////////////// DeleteColumn ///////////////////////////////////////////////////////////////////////////////////////////
+
+core::command::DeleteColumn::DeleteColumn(core::TableId id, size_t columnIdx)
+    : fId{id}, fColumnIdx{columnIdx} {}
+
+void core::command::DeleteColumn::exec(VirtualDatabase& db)
+{
+    db.table(fId).deleteColumn(fColumnIdx);
+}
+
 /////////////// AddRow /////////////////////////////////////////////////////////////////////////////////////////////////
 
 core::command::AddRow::AddRow(core::TableId id) : fId{id} {}
@@ -51,4 +71,14 @@ core::command::AddRow::AddRow(core::TableId id) : fId{id} {}
 void core::command::AddRow::exec(VirtualDatabase& db)
 {
     db.table(fId).createRow();
+}
+
+/////////////// AddRow /////////////////////////////////////////////////////////////////////////////////////////////////
+
+core::command::DeleteRow::DeleteRow(core::TableId tableId, size_t rowId)
+    : fTableId{tableId}, fRowId{rowId} {}
+
+void core::command::DeleteRow::exec(VirtualDatabase& db)
+{
+    db.table(fTableId).deleteRow(fRowId);
 }
