@@ -318,6 +318,8 @@ void MainWindow::reenable()
     ui->createNewTableBtn->setEnabled(d->dbClient.hasDatabase());
     ui->tableListView->setEnabled(d->dbClient.hasDatabase());
     ui->mainWidget->setEnabled(d->dbClient.hasDatabase() && d->currentTableId.has_value());
+    ui->acSave->setEnabled(d->dbClient.hasDatabase());
+    ui->acSaveAs->setEnabled(d->dbClient.hasDatabase());
 
     if (d->currentTableId) {
         const auto* table = d->dbClient.table(d->currentTableId.value());
