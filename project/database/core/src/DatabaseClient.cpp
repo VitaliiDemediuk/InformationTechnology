@@ -22,6 +22,12 @@ bool core::DatabaseClient::hasDatabase() const
 void core::DatabaseClient::setNewDatabase(std::unique_ptr<VirtualDatabase> db)
 {
     fDb = std::move(db);
+    fHaveChanges = false;
+}
+
+bool core::DatabaseClient::hasChanges() const
+{
+    return fHaveChanges;
 }
 
 const core::VirtualTable* core::DatabaseClient::table(core::TableId id) const
@@ -47,6 +53,7 @@ void core::DatabaseClient::exec(std::unique_ptr<AbstractCommand> cmd)
         BOOST_THROW_EXCEPTION(std::logic_error("There is no database!"));
     }
     cmd->exec(*fDb);
+    fHaveChanges = true;
 }
 
 bool core::DatabaseClient::validateDatabaseName(const std::wstring& name) const

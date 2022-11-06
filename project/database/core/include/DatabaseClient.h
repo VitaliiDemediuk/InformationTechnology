@@ -18,6 +18,7 @@ public:
     const std::wstring& databaseName() const;
     bool hasDatabase() const;
     void setNewDatabase(std::unique_ptr<VirtualDatabase> db);
+    bool hasChanges() const;
 
     const core::VirtualTable* table(core::TableId id) const;
     const core::SaveInformation& lastSaveInfo() const;
@@ -32,6 +33,7 @@ public:
 
 protected:
     std::unique_ptr<VirtualDatabase> fDb;
+    bool fHaveChanges = false;
 };
 
 } // core

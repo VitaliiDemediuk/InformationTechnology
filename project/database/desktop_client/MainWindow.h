@@ -36,14 +36,17 @@ private slots:
     void refreshCurrentTableId(const QModelIndex& index);
     void addColumn();
     void addRow();
-    void save();
-    void saveAs();
+    bool save();
+    bool saveAs();
 
 private:
+    enum class Continue : bool { NO = false, YES = true};
+
     // Methods
     void reenable();
     void refreshTable();
     void refresh();
+    Continue proposeSavingsIfNecessary();
 
     // Fields
     std::unique_ptr<Ui::MainWindow> ui;

@@ -1,6 +1,8 @@
-#include <SaveDatabaseDialog.h>
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
+
+// Qt
+#include <QMessageBox>
 
 // Dialogs
 #include "NewDbDialog.h"
@@ -128,6 +130,10 @@ void MainWindow::editCell(size_t rowIdx, size_t columnIdx, core::CellData data)
 
 void MainWindow::createNewDatabase()
 {
+    if (proposeSavingsIfNecessary() == Continue::NO) {
+        return;
+    }
+
     desktop::NewDbDialog dialog(d->dbClient, this);
     if (std::wstring dbName; dialog.exec(dbName)) {
         auto db = std::make_unique<core::Database>(std::move(dbName), std::make_unique<core::CustomTableFactory>());
@@ -294,24 +300,27 @@ void MainWindow::addRow()
     reenable();
 }
 
-void MainWindow::save()
+bool MainWindow::save()
 {
     const auto& info = d->dbClient.lastSaveInfo();
     if (std::holds_alternative<std::monostate>(info)) {
-        saveAs();
+        return saveAs();
     } else {
         auto cmd = std::make_unique<core::command::SaveDatabase>(info);
         d->dbClient.exec(std::move(cmd));
+        return true;
     }
 }
 
-void MainWindow::saveAs()
+bool MainWindow::saveAs()
 {
     desktop::SaveDatabaseDialog dialog(this);
     if (auto saveInfo = d->dbClient.lastSaveInfo(); dialog.exec(saveInfo)) {
         auto cmd = std::make_unique<core::command::SaveDatabase>(std::move(saveInfo));
         d->dbClient.exec(std::move(cmd));
+        return true;
     }
+    return false;
 }
 
 /////////////// Private ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -351,4 +360,31 @@ void MainWindow::refresh()
     refreshTable();
 
     reenable();
+}
+
+MainWindow::Continue MainWindow::proposeSavingsIfNecessary()
+{
+    if (!d->dbClient.hasDatabase() || !d->dbClient.hasChanges()) {
+        return Continue::YES;
+    }
+
+    const auto res = QMessageBox::question(this, "Save database?",
+                                           "The database has been modified. Do you want to save your changes?",
+                                           QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                                           QMessageBox::Save);
+
+    switch (res) {
+    case QMessageBox::Save: {
+        return save() ? Continue::YES : Continue::NO;
+    }
+    case QMessageBox::Discard: {
+        return Continue::YES;
+    }
+    case QMessageBox::Cancel: {
+        return Continue::NO;
+    }
+    default: {
+        throw std::logic_error("Unexpected result from QMessageBox::question.");
+    }
+    }
 }
