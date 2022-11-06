@@ -47,7 +47,7 @@ QWidget* desktop::DbTableDelegate::createEditor(QWidget* parent, const QStyleOpt
     const auto rowIdx = index.row();
     const auto& columnInfo = fCoreTable->column(columnIdx);
 
-    switch (columnInfo.dateType()) {
+    switch (columnInfo.dataType()) {
     case core::DataType::INTEGER: {
         static const detail::EmptyAllowedValidator<QIntValidator> intValidator;
         auto* lineEdit = new QLineEdit(parent);
@@ -106,7 +106,7 @@ void desktop::DbTableDelegate::setModelData(QWidget* editor, QAbstractItemModel*
     const auto columnIdx = index.column();
     core::CellData data{};
 
-    switch (fCoreTable->column(columnIdx).dateType()) {
+    switch (fCoreTable->column(columnIdx).dataType()) {
         case core::DataType::INTEGER: {
             auto* lineEdit = static_cast<QLineEdit*>(editor);
             if (const auto text = lineEdit->text(); !text.isEmpty()) {

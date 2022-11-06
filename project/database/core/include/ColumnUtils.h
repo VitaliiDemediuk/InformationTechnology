@@ -64,7 +64,7 @@ public:
     const std::wstring& name() const noexcept;
     void changeName(std::wstring name);
 
-    virtual DataType dateType() const = 0;
+    virtual DataType dataType() const = 0;
     virtual std::unique_ptr<VirtualColumnInfo> clone() const = 0;
     // can edit row data
     virtual bool isEditable() const = 0;
@@ -84,7 +84,7 @@ class ColumnInfo: public VirtualColumnInfo
 public:
     explicit ColumnInfo(DataType type, std::wstring name);
 
-    DataType dateType() const final;
+    DataType dataType() const final;
     std::unique_ptr<VirtualColumnInfo> clone() const final;
     bool isEditable() const final;
 private:
@@ -101,7 +101,7 @@ public:
     explicit IntervalColumnInfo(ValueT fLowerLimit, ValueT upperLimit, std::wstring name)
         : Super{std::move(name)}, fLowerLimit{fLowerLimit}, fUpperLimit{upperLimit} {}
 
-    DataType dateType() const final { return DataT; }
+    DataType dataType() const final { return DataT; }
 
     std::unique_ptr<VirtualColumnInfo> clone() const final
     {

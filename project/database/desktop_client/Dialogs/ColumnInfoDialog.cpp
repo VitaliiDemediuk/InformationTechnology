@@ -83,7 +83,7 @@ int desktop::ColumnInfoDialog::exec(std::unique_ptr<core::VirtualColumnInfo>& co
 int desktop::ColumnInfoDialog::exec(const core::VirtualColumnInfo& columnInfo, std::wstring& newName)
 {
     reenable(false);
-    ui->typeComboBox->setCurrentIndex(static_cast<int>(columnInfo.dateType()));
+    ui->typeComboBox->setCurrentIndex(static_cast<int>(columnInfo.dataType()));
 
     newName = columnInfo.name();
     ui->lineEdNewName->setText(QString::fromStdWString(newName));

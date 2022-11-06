@@ -41,14 +41,14 @@ core::ColumnInfo::ColumnInfo(DataType type, std::wstring name)
     }
 }
 
-core::DataType core::ColumnInfo::dateType() const
+core::DataType core::ColumnInfo::dataType() const
 {
     return fType;
 }
 
 auto core::ColumnInfo::clone() const -> std::unique_ptr<VirtualColumnInfo>
 {
-    return std::make_unique<This>(dateType(), name());
+    return std::make_unique<This>(dataType(), name());
 }
 
 bool core::ColumnInfo::isEditable() const

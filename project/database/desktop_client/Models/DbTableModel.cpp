@@ -116,7 +116,7 @@ void desktop::DbTableModel::reset(const core::VirtualTable* table)
         for (size_t i = 0; i < count; ++i) {
             const auto& column = table->column(i);
             columnsInfo.emplace_back(ColumnInfo{.isEditable = column.isEditable(),
-                                                .needFileIcon = column.dateType() == core::DataType::TEXT_FILE,
+                                                .needFileIcon = column.dataType() == core::DataType::TEXT_FILE,
                                                 .name = QString::fromStdWString(column.name())});
         }
 

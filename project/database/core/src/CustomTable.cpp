@@ -20,7 +20,7 @@ public:
 
     explicit IdColumnInfo() : Super{L"Id"} {}
 
-    core::DataType dateType() const final
+    core::DataType dataType() const final
         { return DataT; }
     std::unique_ptr<VirtualColumnInfo> clone() const final
         { return std::make_unique<IdColumnInfo>(); }
