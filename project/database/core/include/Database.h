@@ -22,6 +22,7 @@ public:
     const std::wstring& name() const final;
     bool changeName(std::wstring name) final;
     void saveDatabase(const SaveInformation& saveInfo) final;
+    const SaveInformation& lastSaveInfo() const final;
     void deleteDatabase() final;
 
     // Table operations
@@ -41,6 +42,7 @@ private:
     std::wstring fName;
     const std::unique_ptr<const AbstractTableFactory> fTableFactory;
     std::map<TableId, std::unique_ptr<VirtualTable>> fTables;
+    SaveInformation fLastSaveInfo;
 };
 
 } // core

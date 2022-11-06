@@ -3,7 +3,8 @@
 
 #include <vector>
 #include <variant>
-#include <filesystem>
+#include <string>
+#include <memory>
 
 namespace core
 {
@@ -27,6 +28,12 @@ struct IntervalType {
     Type data{};
 };
 
+struct File
+{
+    std::wstring name;
+    std::string data;
+};
+
 template <DataType type>
 struct ColumnTypeTrait {};
 
@@ -34,7 +41,7 @@ template<> struct ColumnTypeTrait<DataType::INTEGER>          { using Type = lon
 template<> struct ColumnTypeTrait<DataType::REAL>             { using Type = double; };
 template<> struct ColumnTypeTrait<DataType::CHAR>             { using Type = wchar_t; };
 template<> struct ColumnTypeTrait<DataType::STRING>           { using Type = std::wstring; };
-template<> struct ColumnTypeTrait<DataType::TEXT_FILE>        { using Type = std::filesystem::path; };
+template<> struct ColumnTypeTrait<DataType::TEXT_FILE>        { using Type = File; };
 template<> struct ColumnTypeTrait<DataType::INTERVAL_INTEGER> { using Type = IntervalType<ColumnTypeTrait<DataType::INTEGER>::Type>; };
 
 template<DataType type>

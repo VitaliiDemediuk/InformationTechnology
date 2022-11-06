@@ -23,7 +23,14 @@ bool core::Database::changeName(std::wstring name)
 }
 
 void core::Database::saveDatabase(const SaveInformation& saveInfo)
-{}
+{
+    fLastSaveInfo = saveInfo;
+}
+
+const core::SaveInformation& core::Database::lastSaveInfo() const
+{
+    return fLastSaveInfo;
+}
 
 void core::Database::deleteDatabase()
 {}

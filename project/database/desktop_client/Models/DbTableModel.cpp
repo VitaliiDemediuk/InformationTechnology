@@ -21,7 +21,7 @@ QVariant toQVariant(const core::CellData& cellData)
         [&res] (const core::column_t<core::DataType::REAL>& value) { res = QString::number(value).replace('.', ','); },
         [&res] (const core::column_t<core::DataType::CHAR>& value) { res = QChar{value}; },
         [&res] (const core::column_t<core::DataType::STRING>& value) { res = QString::fromStdWString(value); },
-        [&res] (const core::column_t<core::DataType::TEXT_FILE>& value) { res = QString::fromStdWString(value.wstring()); },
+        [&res] (const core::column_t<core::DataType::TEXT_FILE>& value) { res = QString::fromStdWString(value.name); },
         [&res] (const core::column_t<core::DataType::INTERVAL_INTEGER>& value) { res = value.data; },
         [] (auto&& value) { throw std::logic_error("core::CellData to QVariant cast not implemented!"); }
     }, cellData);

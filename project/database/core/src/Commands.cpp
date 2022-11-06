@@ -92,3 +92,13 @@ void core::command::EditCell::exec(VirtualDatabase& db)
 {
     db.table(fTableId).setNewValue(fRowId, fColumnIdx, std::move(data));
 }
+
+/////////////// SaveDatabase ///////////////////////////////////////////////////////////////////////////////////////////
+
+core::command::SaveDatabase::SaveDatabase(core::SaveInformation saveInfo)
+    : fSaveInfo{std::move(saveInfo)} {}
+
+void core::command::SaveDatabase::exec(VirtualDatabase& db)
+{
+    db.saveDatabase(fSaveInfo);
+}

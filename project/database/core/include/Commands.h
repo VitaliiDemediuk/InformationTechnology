@@ -4,6 +4,7 @@
 // Local
 #include "AbstractCommand.h"
 #include "VirtualTable.h"
+#include "VirtualDatabase.h"
 
 namespace core::command
 {
@@ -108,6 +109,16 @@ private:
     const size_t fRowId;
     const size_t fColumnIdx;
     CellData data;
+};
+
+class SaveDatabase: public AbstractCommand
+{
+public:
+    explicit SaveDatabase(core::SaveInformation saveInfo);
+
+    void exec(VirtualDatabase& db) final;
+private:
+    core::SaveInformation fSaveInfo;
 };
 
 } // core::command

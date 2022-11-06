@@ -20,6 +20,7 @@ public:
     void setNewDatabase(std::unique_ptr<VirtualDatabase> db);
 
     const core::VirtualTable* table(core::TableId id) const;
+    const core::SaveInformation& lastSaveInfo() const;
 
     // AbstractExecutor
     void exec(std::unique_ptr<AbstractCommand> cmd) final;

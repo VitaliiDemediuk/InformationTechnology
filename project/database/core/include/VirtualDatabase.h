@@ -5,10 +5,14 @@
 #include "VirtualTable.h"
 #include "VirtualValidators.h"
 
+// STL
+#include <filesystem>
+
 namespace core
 {
 
-using SaveInformation = std::variant<std::filesystem::path>;
+using SaveInformation = std::variant<std::monostate,
+                                     std::filesystem::path>;
 
 class VirtualDatabase: public VirtualTableNameValidator,
                        public VirtualColumnNameValidator
@@ -19,6 +23,7 @@ public:
     virtual const std::wstring& name() const = 0;
     virtual bool changeName(std::wstring name) = 0;
     virtual void saveDatabase(const SaveInformation& saveInfo) = 0;
+    virtual const SaveInformation& lastSaveInfo() const = 0;
     virtual void deleteDatabase() = 0;
 
     // Table operations

@@ -32,6 +32,15 @@ const core::VirtualTable* core::DatabaseClient::table(core::TableId id) const
     return &fDb->table(id);
 }
 
+const core::SaveInformation& core::DatabaseClient::lastSaveInfo() const
+{
+    if (!hasDatabase()) {
+        static const core::SaveInformation emptyInfo{};
+        return emptyInfo;
+    }
+    return fDb->lastSaveInfo();
+}
+
 void core::DatabaseClient::exec(std::unique_ptr<AbstractCommand> cmd)
 {
     if (!hasDatabase()) {

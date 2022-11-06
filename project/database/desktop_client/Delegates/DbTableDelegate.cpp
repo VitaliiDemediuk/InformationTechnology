@@ -3,6 +3,7 @@
 // Qt
 #include <QLineEdit>
 #include <QSpinBox>
+#include <QFileDialog>
 
 namespace detail
 {
@@ -43,6 +44,7 @@ QWidget* desktop::DbTableDelegate::createEditor(QWidget* parent, const QStyleOpt
     }
 
     const auto columnIdx = index.column();
+    const auto rowIdx = index.row();
     const auto& columnInfo = fCoreTable->column(columnIdx);
 
     switch (columnInfo.dateType()) {
@@ -74,6 +76,16 @@ QWidget* desktop::DbTableDelegate::createEditor(QWidget* parent, const QStyleOpt
         return lineEdit;
     }
     case core::DataType::TEXT_FILE: {
+        const auto setFileWorker = [this, rowIdx, columnIdx] (const QString& fileName, const QByteArray& fileContent) {
+            if (!fileName.isEmpty()) {
+                core::File file;
+                std::filesystem::path path(fileName.toStdWString());
+                file.name = path.filename().wstring();
+                file.data = fileContent.toStdString();
+                fCellEditor.editCell(rowIdx, columnIdx, std::move(file));
+            }
+        };
+        QFileDialog::getOpenFileContent("Select file", setFileWorker);
         return nullptr;
     }
     case core::DataType::NN: {

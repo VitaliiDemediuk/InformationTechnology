@@ -1,3 +1,4 @@
+#include <SaveDatabaseDialog.h>
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -5,6 +6,7 @@
 #include "NewDbDialog.h"
 #include "TableNameDialog.h"
 #include "ColumnInfoDialog.h"
+#include "SaveDatabaseDialog.h"
 
 // Models
 #include "TableListModel.h"
@@ -94,9 +96,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tableView->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableView->horizontalHeader(), &QTableView::customContextMenuRequested, this, &MainWindow::showHorizontalHeaderContextMenu);
-    connect(ui->tableView->verticalHeader(), &QTableView::customContextMenuRequested, this, &MainWindow::showVerticalHeaderContextMenu);
     ui->tableView->verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableView->verticalHeader(), &QTableView::customContextMenuRequested, this, &MainWindow::showVerticalHeaderContextMenu);
 
+    connect(ui->acSave, &QAction::triggered, this, [this] () {
+        const auto& info = d->dbClient.lastSaveInfo();
+        if (std::holds_alternative<std::monostate>(info)) {
+            saveAs();
+        } else {
+            auto cmd = std::make_unique<core::command::SaveDatabase>(info);
+            d->dbClient.exec(std::move(cmd));
+        }
+    });
+    connect(ui->acSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
 
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
@@ -288,6 +300,15 @@ void MainWindow::addRow()
     d->dbClient.exec(std::move(cmd));
     refreshTable();
     reenable();
+}
+
+void MainWindow::saveAs()
+{
+    desktop::SaveDatabaseDialog dialog(this);
+    if (auto saveInfo = d->dbClient.lastSaveInfo(); dialog.exec(saveInfo)) {
+        auto cmd = std::make_unique<core::command::SaveDatabase>(std::move(saveInfo));
+        d->dbClient.exec(std::move(cmd));
+    }
 }
 
 /////////////// Private ////////////////////////////////////////////////////////////////////////////////////////////////
