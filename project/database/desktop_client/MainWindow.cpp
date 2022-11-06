@@ -99,15 +99,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableView->verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableView->verticalHeader(), &QTableView::customContextMenuRequested, this, &MainWindow::showVerticalHeaderContextMenu);
 
-    connect(ui->acSave, &QAction::triggered, this, [this] () {
-        const auto& info = d->dbClient.lastSaveInfo();
-        if (std::holds_alternative<std::monostate>(info)) {
-            saveAs();
-        } else {
-            auto cmd = std::make_unique<core::command::SaveDatabase>(info);
-            d->dbClient.exec(std::move(cmd));
-        }
-    });
+    connect(ui->acSave, &QAction::triggered, this, &MainWindow::save);
     connect(ui->acSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
 
     // Set models
@@ -300,6 +292,17 @@ void MainWindow::addRow()
     d->dbClient.exec(std::move(cmd));
     refreshTable();
     reenable();
+}
+
+void MainWindow::save()
+{
+    const auto& info = d->dbClient.lastSaveInfo();
+    if (std::holds_alternative<std::monostate>(info)) {
+        saveAs();
+    } else {
+        auto cmd = std::make_unique<core::command::SaveDatabase>(info);
+        d->dbClient.exec(std::move(cmd));
+    }
 }
 
 void MainWindow::saveAs()

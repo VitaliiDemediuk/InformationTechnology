@@ -36,6 +36,7 @@ private slots:
     void refreshCurrentTableId(const QModelIndex& index);
     void addColumn();
     void addRow();
+    void save();
     void saveAs();
 
 private:
