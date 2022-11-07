@@ -2,7 +2,9 @@
 #include "./ui_MainWindow.h"
 
 // Qt
+#include <QDir>
 #include <QMessageBox>
+#include <QFileDialog>
 
 // Dialogs
 #include "NewDbDialog.h"
@@ -103,6 +105,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->acSave, &QAction::triggered, this, &MainWindow::save);
     connect(ui->acSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
+
+    connect(ui->acOpenFromCustomFormatFile, &QAction::triggered, this, &MainWindow::openFromCustomFormatFile);
 
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
@@ -314,13 +318,36 @@ bool MainWindow::save()
 
 bool MainWindow::saveAs()
 {
+    auto saveInfo = d->dbClient.lastSaveInfo();
+    if (std::holds_alternative<std::monostate>(saveInfo)) {
+        std::filesystem::path path{QDir::homePath().toStdWString()};
+        path.append(d->dbClient.databaseName() + L".db");
+        saveInfo = std::move(path);
+    }
+
     desktop::SaveDatabaseDialog dialog(this);
-    if (auto saveInfo = d->dbClient.lastSaveInfo(); dialog.exec(saveInfo)) {
+    if (dialog.exec(saveInfo)) {
         auto cmd = std::make_unique<core::command::SaveDatabase>(std::move(saveInfo));
         d->dbClient.exec(std::move(cmd));
+        refresh();
         return true;
     }
     return false;
+}
+
+void MainWindow::openFromCustomFormatFile()
+{
+    if (proposeSavingsIfNecessary() == Continue::NO) {
+        return;
+    }
+
+    auto filename = QFileDialog::getOpenFileName(this, "Open file", "","Database (*.db)");
+    if (!filename.isEmpty()) {
+        core::CustomSaveLoadStrategy saveLoadStrategy{filename.toStdWString()};
+        auto newDb = saveLoadStrategy.load();
+        d->dbClient.setNewDatabase(std::move(newDb));
+        refresh();
+    }
 }
 
 /////////////// Private ////////////////////////////////////////////////////////////////////////////////////////////////

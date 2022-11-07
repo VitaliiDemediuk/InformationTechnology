@@ -21,7 +21,7 @@ desktop::SaveDatabaseDialog::SaveDatabaseDialog(QWidget* parent) :
         const auto dialogPath = customFilePath.has_value() ? QString::fromStdWString(customFilePath->wstring())
                                                            : QString{};
         const auto fileName = QFileDialog::getSaveFileName(this, "Save database", dialogPath,
-                                                                 "Database (*.database)");
+                                                                 "Database (*.db)");
         if (!fileName.isEmpty()) {
             customFilePath = fileName.toStdWString();
         }

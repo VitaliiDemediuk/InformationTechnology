@@ -95,9 +95,10 @@ template <DataType DataT> requires (isIntervalType(DataT))
 class IntervalColumnInfo : public VirtualColumnInfo
 {
     using Super  = VirtualColumnInfo;
-    using ValueT = typename column_t<DataT>::Type;
     using This   = IntervalColumnInfo<DataT>;
 public:
+    using ValueT = typename column_t<DataT>::Type;
+
     explicit IntervalColumnInfo(ValueT fLowerLimit, ValueT upperLimit, std::wstring name)
         : Super{std::move(name)}, fLowerLimit{fLowerLimit}, fUpperLimit{upperLimit} {}
 

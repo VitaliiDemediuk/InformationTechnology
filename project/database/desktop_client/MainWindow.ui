@@ -126,8 +126,16 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuOpen_database">
+     <property name="title">
+      <string>Open database</string>
+     </property>
+     <addaction name="acOpenFromCustomFormatFile"/>
+     <addaction name="acOpenFromSQLite"/>
+     <addaction name="acOpenFromMongoDb"/>
+    </widget>
     <addaction name="acNewDatabase"/>
-    <addaction name="acOpenDatabase"/>
+    <addaction name="menuOpen_database"/>
     <addaction name="acSave"/>
     <addaction name="acSaveAs"/>
    </widget>
@@ -139,11 +147,6 @@
     <string>New database</string>
    </property>
   </action>
-  <action name="acOpenDatabase">
-   <property name="text">
-    <string>Open database</string>
-   </property>
-  </action>
   <action name="acSave">
    <property name="text">
     <string>Save</string>
@@ -152,6 +155,24 @@
   <action name="acSaveAs">
    <property name="text">
     <string>Save as...</string>
+   </property>
+  </action>
+  <action name="acOpenFromCustomFormatFile">
+   <property name="text">
+    <string>Custom format file</string>
+   </property>
+   <property name="toolTip">
+    <string>Custom format file</string>
+   </property>
+  </action>
+  <action name="acOpenFromSQLite">
+   <property name="text">
+    <string>SQLite</string>
+   </property>
+  </action>
+  <action name="acOpenFromMongoDb">
+   <property name="text">
+    <string>MongoDb</string>
    </property>
   </action>
  </widget>

@@ -38,6 +38,7 @@ private slots:
     void addRow();
     bool save();
     bool saveAs();
+    void openFromCustomFormatFile();
 
 private:
     enum class Continue : bool { NO = false, YES = true};

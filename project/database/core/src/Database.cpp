@@ -25,6 +25,18 @@ bool core::Database::changeName(std::wstring name)
 void core::Database::saveDatabase(const SaveInformation& saveInfo)
 {
     fLastSaveInfo = saveInfo;
+    const auto saveLoadStrategy = [&saveInfo] () -> std::unique_ptr<AbstractSaveLoadStrategy> {
+        if (std::holds_alternative<std::filesystem::path>(saveInfo)) {
+            return std::make_unique<CustomSaveLoadStrategy>(std::get<std::filesystem::path>(saveInfo));
+        }
+        return nullptr;
+    }();
+    saveLoadStrategy->save(*this);
+
+    if (std::holds_alternative<std::filesystem::path>(saveInfo)) {
+        auto newName = std::get<std::filesystem::path>(saveInfo).stem().wstring();
+        changeName(std::move(newName));
+    }
 }
 
 const core::SaveInformation& core::Database::lastSaveInfo() const
@@ -47,6 +59,11 @@ const core::VirtualTable& core::Database::table(TableId id) const
         BOOST_THROW_EXCEPTION(std::logic_error("Invalid table id!"));
     }
     return *it->second;
+}
+
+size_t core::Database::tableCount() const
+{
+    return fTables.size();
 }
 
 void core::Database::forAllTable(std::function<void(const VirtualTable&)> worker) const

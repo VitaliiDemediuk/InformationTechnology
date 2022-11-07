@@ -8,6 +8,7 @@
 // Local
 #include "VirtualTable.h"
 #include "AbstractTableFactory.h"
+#include "CustomSaveLoadStrategy.h"
 
 namespace core
 {
@@ -42,6 +43,8 @@ public:
     void forAllRow(std::function<void(size_t id, const Row&)> worker) const final;
 
 private:
+    friend class CustomSaveLoadStrategy;
+
     std::atomic<size_t> lastId = 1;
     const TableId fId;
     std::wstring fName;

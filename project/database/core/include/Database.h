@@ -6,6 +6,7 @@
 
 // Local
 #include "VirtualDatabase.h"
+#include "CustomSaveLoadStrategy.h"
 
 namespace core
 {
@@ -28,6 +29,7 @@ public:
     // Table operations
     VirtualTable& table(TableId id) final;
     const VirtualTable& table(TableId id) const final;
+    size_t tableCount() const final;
     void forAllTable(std::function<void(const VirtualTable&)> worker) const final;
 
     VirtualTable& createTable(std::wstring name) final;
@@ -39,6 +41,8 @@ public:
     bool validateColumnName(const std::wstring& name) const final;
 
 private:
+    friend class CustomSaveLoadStrategy;
+
     std::wstring fName;
     const std::unique_ptr<const AbstractTableFactory> fTableFactory;
     std::map<TableId, std::unique_ptr<VirtualTable>> fTables;
