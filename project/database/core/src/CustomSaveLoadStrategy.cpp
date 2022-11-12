@@ -7,8 +7,8 @@
 #include "Database.h"
 #include "CustomTable.h"
 
-core::CustomSaveLoadStrategy::CustomSaveLoadStrategy(std::filesystem::path filePath)
-    : fFilePath{std::move(filePath)} {}
+core::save_load::CustomFileStrategy::CustomFileStrategy(CustomFileInfo saveLoadInfo)
+    : fSaveLoadInfo{std::move(saveLoadInfo)} {}
 
 namespace
 {
@@ -104,9 +104,9 @@ void writeTable(std::ofstream& stream, const core::VirtualTable& table)
 
 } // anon namespace
 
-void core::CustomSaveLoadStrategy::save(const VirtualDatabase& db) const
+void core::save_load::CustomFileStrategy::save(const VirtualDatabase& db) const
 {
-    std::ofstream stream(fFilePath, std::ios::binary);
+    std::ofstream stream(fSaveLoadInfo.filePath, std::ios::binary);
     if (!stream.is_open()) {
         throw std::runtime_error("Saving database to custom format file. Invalid path!");
     }
@@ -221,7 +221,7 @@ core::Row readRow(std::ifstream& stream, const core::VirtualTable& table) {
 
 } // anon namespace
 
-void core::CustomSaveLoadStrategy::readRows(std::ifstream& stream, core::CustomTable& table) const
+void core::save_load::CustomFileStrategy::readRows(std::ifstream& stream, core::CustomTable& table) const
 {
     const auto rowCount = readTrivial<size_t>(stream);
     for (size_t i = 0; i < rowCount; ++i) {
@@ -235,7 +235,7 @@ void core::CustomSaveLoadStrategy::readRows(std::ifstream& stream, core::CustomT
     }
 }
 
-std::unique_ptr<core::VirtualTable> core::CustomSaveLoadStrategy::readTable(std::ifstream& stream) const
+std::unique_ptr<core::VirtualTable> core::save_load::CustomFileStrategy::readTable(std::ifstream& stream) const
 {
     auto tableName = readString<wchar_t>(stream);
     auto tableId = readTrivial<core::TableId>(stream);
@@ -245,14 +245,14 @@ std::unique_ptr<core::VirtualTable> core::CustomSaveLoadStrategy::readTable(std:
     return table;
 }
 
-std::unique_ptr<core::VirtualDatabase> core::CustomSaveLoadStrategy::load() const
+std::unique_ptr<core::VirtualDatabase> core::save_load::CustomFileStrategy::load() const
 {
-    std::ifstream stream(fFilePath, std::ios::binary);
+    std::ifstream stream(fSaveLoadInfo.filePath, std::ios::binary);
     if (!stream.is_open()) {
         throw std::runtime_error("Saving database to custom format file. Invalid path!");
     }
 
-    auto db = std::make_unique<core::Database>(fFilePath.stem().wstring(),
+    auto db = std::make_unique<core::Database>(fSaveLoadInfo.filePath.stem().wstring(),
                                                std::make_unique<core::CustomTableFactory>());
 
     const auto tableCount = readTrivial<size_t>(stream);
@@ -261,7 +261,7 @@ std::unique_ptr<core::VirtualDatabase> core::CustomSaveLoadStrategy::load() cons
         db->fTables[table->id()] = std::move(table);
     }
 
-    db->fLastSaveInfo = fFilePath;
+    db->fLastSaveInfo = fSaveLoadInfo;
 
     return db;
 }

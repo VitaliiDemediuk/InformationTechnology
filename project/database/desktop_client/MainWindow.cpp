@@ -322,11 +322,14 @@ bool MainWindow::saveAs()
     if (std::holds_alternative<std::monostate>(saveInfo)) {
         std::filesystem::path path{QDir::homePath().toStdWString()};
         path.append(d->dbClient.databaseName() + L".db");
-        saveInfo = std::move(path);
+        saveInfo = core::save_load::CustomFileInfo{.filePath = std::move(path)};
     }
 
     desktop::SaveDatabaseDialog dialog(this);
     if (dialog.exec(saveInfo)) {
+        if (std::holds_alternative<core::save_load::MongoDbInfo>(saveInfo)) {
+            std::get<core::save_load::MongoDbInfo>(saveInfo).dbName = d->dbClient.databaseName();
+        }
         auto cmd = std::make_unique<core::command::SaveDatabase>(std::move(saveInfo));
         d->dbClient.exec(std::move(cmd));
         refresh();
@@ -343,7 +346,7 @@ void MainWindow::openFromCustomFormatFile()
 
     auto filename = QFileDialog::getOpenFileName(this, "Open file", "","Database (*.db)");
     if (!filename.isEmpty()) {
-        core::CustomSaveLoadStrategy saveLoadStrategy{filename.toStdWString()};
+        core::save_load::CustomFileStrategy saveLoadStrategy{{.filePath = filename.toStdWString()}};
         auto newDb = saveLoadStrategy.load();
         d->dbClient.setNewDatabase(std::move(newDb));
         refresh();

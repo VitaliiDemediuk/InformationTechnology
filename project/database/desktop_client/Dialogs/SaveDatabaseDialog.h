@@ -29,18 +29,20 @@ public:
     ~SaveDatabaseDialog() override;
 
     using Super::exec;
-    int exec(core::SaveInformation& saveInfo);
+    int exec(core::save_load::Information& saveInfo);
 
 private slots:
     void refresh();
+    void getMongoDbInfoFromUi();
 
 private:
-    void setInfo(const core::SaveInformation& info);
-    core::SaveInformation getInfo();
+    void setInfo(const core::save_load::Information& info);
+    core::save_load::Information getInfo();
 
     std::unique_ptr<Ui::SaveDatabaseDialog> ui;
 
-    std::optional<std::filesystem::path> customFilePath;
+    std::optional<core::save_load::CustomFileInfo> customFileInfo;
+    std::optional<core::save_load::MongoDbInfo> mongoDbInfo;
 };
 
 } // desktop

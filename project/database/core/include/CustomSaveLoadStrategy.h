@@ -6,6 +6,7 @@
 
 // Local
 #include "AbstractSaveLoadStrategy.h"
+#include "SaveLoadUtils.h"
 
 namespace core
 {
@@ -13,10 +14,13 @@ namespace core
 class VirtualTable;
 class CustomTable;
 
-class CustomSaveLoadStrategy: public AbstractSaveLoadStrategy
+namespace save_load
+{
+
+class CustomFileStrategy: public AbstractStrategy
 {
 public:
-    explicit CustomSaveLoadStrategy(std::filesystem::path filePath);
+    explicit CustomFileStrategy(CustomFileInfo saveLoadInfo);
 
     // AbstractSaveLoadStrategy
     void save(const VirtualDatabase& db) const final;
@@ -25,8 +29,10 @@ private:
     void readRows(std::ifstream& stream, CustomTable& table) const;
     std::unique_ptr<VirtualTable> readTable(std::ifstream& stream) const;
 
-    const std::filesystem::path fFilePath;
+    const CustomFileInfo fSaveLoadInfo;
 };
+
+} // save_load
 
 } // core
 

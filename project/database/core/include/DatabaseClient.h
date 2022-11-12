@@ -21,8 +21,7 @@ public:
     bool hasChanges() const;
 
     const core::VirtualTable* table(core::TableId id) const;
-    void setLastSaveInfo() const;
-    const core::SaveInformation& lastSaveInfo() const;
+    const core::save_load::Information& lastSaveInfo() const;
 
     // AbstractExecutor
     void exec(std::unique_ptr<AbstractCommand> cmd) final;

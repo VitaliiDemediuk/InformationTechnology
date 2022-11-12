@@ -5,13 +5,17 @@
 #include <map>
 
 // Local
+#include "AbstractTableFactory.h"
 #include "VirtualDatabase.h"
 #include "CustomSaveLoadStrategy.h"
 
 namespace core
 {
 
-class AbstractTableFactory;
+namespace save_load
+{
+    class CustomFileStrategy;
+}
 
 class Database: public VirtualDatabase
 {
@@ -22,8 +26,8 @@ public:
     // Database operations
     const std::wstring& name() const final;
     bool changeName(std::wstring name) final;
-    void saveDatabase(const SaveInformation& saveInfo) final;
-    const SaveInformation& lastSaveInfo() const final;
+    void saveDatabase(const save_load::Information& saveInfo) final;
+    const save_load::Information& lastSaveInfo() const final;
     void deleteDatabase() final;
 
     // Table operations
@@ -41,12 +45,12 @@ public:
     bool validateColumnName(const std::wstring& name) const final;
 
 private:
-    friend class CustomSaveLoadStrategy;
+    friend class save_load::CustomFileStrategy;
 
     std::wstring fName;
     const std::unique_ptr<const AbstractTableFactory> fTableFactory;
     std::map<TableId, std::unique_ptr<VirtualTable>> fTables;
-    SaveInformation fLastSaveInfo;
+    save_load::Information fLastSaveInfo;
 };
 
 } // core

@@ -114,11 +114,11 @@ private:
 class SaveDatabase: public AbstractCommand
 {
 public:
-    explicit SaveDatabase(core::SaveInformation saveInfo);
+    explicit SaveDatabase(core::save_load::Information saveInfo);
 
     void exec(VirtualDatabase& db) final;
 private:
-    core::SaveInformation fSaveInfo;
+    core::save_load::Information fSaveInfo;
 };
 
 } // core::command

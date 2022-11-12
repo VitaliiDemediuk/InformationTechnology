@@ -2,6 +2,7 @@
 
 // Local
 #include "VirtualDatabase.h"
+#include "SaveLoadUtils.h"
 
 // boost
 #include <boost/throw_exception.hpp>
@@ -38,10 +39,10 @@ const core::VirtualTable* core::DatabaseClient::table(core::TableId id) const
     return &fDb->table(id);
 }
 
-const core::SaveInformation& core::DatabaseClient::lastSaveInfo() const
+const core::save_load::Information& core::DatabaseClient::lastSaveInfo() const
 {
     if (!hasDatabase()) {
-        static const core::SaveInformation emptyInfo{};
+        static const core::save_load::Information emptyInfo{};
         return emptyInfo;
     }
     return fDb->lastSaveInfo();

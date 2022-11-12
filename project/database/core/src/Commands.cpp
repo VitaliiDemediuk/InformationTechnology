@@ -95,7 +95,7 @@ void core::command::EditCell::exec(VirtualDatabase& db)
 
 /////////////// SaveDatabase ///////////////////////////////////////////////////////////////////////////////////////////
 
-core::command::SaveDatabase::SaveDatabase(core::SaveInformation saveInfo)
+core::command::SaveDatabase::SaveDatabase(core::save_load::Information saveInfo)
     : fSaveInfo{std::move(saveInfo)} {}
 
 void core::command::SaveDatabase::exec(VirtualDatabase& db)

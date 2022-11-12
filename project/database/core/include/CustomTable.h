@@ -13,6 +13,11 @@
 namespace core
 {
 
+namespace save_load
+{
+    class CustomFileStrategy;
+}
+
 class CustomTable: public VirtualTable
 {
     using Super = VirtualTable;
@@ -43,7 +48,7 @@ public:
     void forAllRow(std::function<void(size_t id, const Row&)> worker) const final;
 
 private:
-    friend class CustomSaveLoadStrategy;
+    friend class save_load::CustomFileStrategy;
 
     std::atomic<size_t> lastId = 1;
     const TableId fId;

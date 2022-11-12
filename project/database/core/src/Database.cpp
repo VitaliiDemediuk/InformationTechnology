@@ -1,13 +1,11 @@
 #include "Database.h"
 
-// Local
-#include "AbstractTableFactory.h"
-
 // STL
 #include <atomic>
 
 // boost
 #include <boost/throw_exception.hpp>
+#include <MongoDbSaveLoadStrategy.h>
 
 core::Database::Database(std::wstring name, std::unique_ptr<const AbstractTableFactory> factory)
     : fName(std::move(name)), fTableFactory{std::move(factory)} {}
@@ -22,24 +20,27 @@ bool core::Database::changeName(std::wstring name)
     fName = std::move(name);
 }
 
-void core::Database::saveDatabase(const SaveInformation& saveInfo)
+void core::Database::saveDatabase(const core::save_load::Information& saveInfo)
 {
     fLastSaveInfo = saveInfo;
-    const auto saveLoadStrategy = [&saveInfo] () -> std::unique_ptr<AbstractSaveLoadStrategy> {
-        if (std::holds_alternative<std::filesystem::path>(saveInfo)) {
-            return std::make_unique<CustomSaveLoadStrategy>(std::get<std::filesystem::path>(saveInfo));
+    const auto saveLoadStrategy = [&saveInfo] () -> std::unique_ptr<save_load::AbstractStrategy> {
+        if (std::holds_alternative<core::save_load::CustomFileInfo>(saveInfo)) {
+            return std::make_unique<save_load::CustomFileStrategy>(std::get<core::save_load::CustomFileInfo>(saveInfo));
+        }
+        if (std::holds_alternative<core::save_load::MongoDbInfo>(saveInfo)) {
+            return std::make_unique<save_load::MongoDbStrategy>(std::get<core::save_load::MongoDbInfo>(saveInfo));
         }
         return nullptr;
     }();
     saveLoadStrategy->save(*this);
 
-    if (std::holds_alternative<std::filesystem::path>(saveInfo)) {
-        auto newName = std::get<std::filesystem::path>(saveInfo).stem().wstring();
+    if (std::holds_alternative<core::save_load::CustomFileInfo>(saveInfo)) {
+        auto newName = std::get<core::save_load::CustomFileInfo>(saveInfo).filePath.stem().wstring();
         changeName(std::move(newName));
     }
 }
 
-const core::SaveInformation& core::Database::lastSaveInfo() const
+const core::save_load::Information& core::Database::lastSaveInfo() const
 {
     return fLastSaveInfo;
 }
