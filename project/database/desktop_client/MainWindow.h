@@ -39,6 +39,7 @@ private slots:
     bool save();
     bool saveAs();
     void openFromCustomFormatFile();
+    void loadFromMongoDb();
 
 private:
     enum class Continue : bool { NO = false, YES = true};

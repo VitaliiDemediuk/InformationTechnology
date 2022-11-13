@@ -132,7 +132,7 @@
      </property>
      <addaction name="acOpenFromCustomFormatFile"/>
      <addaction name="acOpenFromSQLite"/>
-     <addaction name="acOpenFromMongoDb"/>
+     <addaction name="acLoadFromMongoDb"/>
     </widget>
     <addaction name="acNewDatabase"/>
     <addaction name="menuOpen_database"/>
@@ -170,7 +170,7 @@
     <string>SQLite</string>
    </property>
   </action>
-  <action name="acOpenFromMongoDb">
+  <action name="acLoadFromMongoDb">
    <property name="text">
     <string>MongoDb</string>
    </property>

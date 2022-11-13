@@ -5,12 +5,14 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <MongoDbSaveLoadStrategy.h>
 
 // Dialogs
 #include "NewDbDialog.h"
 #include "TableNameDialog.h"
 #include "ColumnInfoDialog.h"
 #include "SaveDatabaseDialog.h"
+#include "LoadFromMongoDbDialog.h"
 
 // Models
 #include "TableListModel.h"
@@ -107,6 +109,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->acSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
 
     connect(ui->acOpenFromCustomFormatFile, &QAction::triggered, this, &MainWindow::openFromCustomFormatFile);
+    connect(ui->acLoadFromMongoDb, &QAction::triggered, this, &MainWindow::loadFromMongoDb);
 
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
@@ -347,6 +350,23 @@ void MainWindow::openFromCustomFormatFile()
     auto filename = QFileDialog::getOpenFileName(this, "Open file", "","Database (*.db)");
     if (!filename.isEmpty()) {
         core::save_load::CustomFileStrategy saveLoadStrategy{{.filePath = filename.toStdWString()}};
+        auto newDb = saveLoadStrategy.load();
+        d->dbClient.setNewDatabase(std::move(newDb));
+        refresh();
+    }
+}
+
+void MainWindow::loadFromMongoDb()
+{
+    if (proposeSavingsIfNecessary() == Continue::NO) {
+        return;
+    }
+
+    desktop::LoadFromMongoDbDialog dialog(d->dbClient);
+    core::save_load::MongoDbInfo saveInfo;
+
+    if (dialog.exec(saveInfo)) {
+        core::save_load::MongoDbStrategy saveLoadStrategy{std::move(saveInfo)};
         auto newDb = saveLoadStrategy.load();
         d->dbClient.setNewDatabase(std::move(newDb));
         refresh();
