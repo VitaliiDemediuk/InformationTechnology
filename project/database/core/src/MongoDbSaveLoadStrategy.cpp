@@ -56,6 +56,71 @@ void writeTablesInfo(mongocxx::database& mongoDb, const core::VirtualDatabase& d
 
 }
 
+// helper type for the visitor #4
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+// explicit deduction guide (not needed as of C++20)
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+void writeRow(mongocxx::collection& coll, const core::Row& row)
+{
+    auto builder = bsoncxx::builder::stream::document{};
+    const auto rowId = std::get<core::column_t<core::DataType::INTEGER>>(row[0]);
+    auto context = builder << "id" << static_cast<int64_t>(rowId)
+                           << "row" << bsoncxx::builder::stream::open_array;
+
+    const auto visitor = overloaded {
+        [&context] (const std::monostate& value) {
+            static constexpr bsoncxx::types::b_null null;
+            context = context << null;
+        },
+        [&context] (const core::column_t<core::DataType::INTEGER>& value) {
+            context = context << static_cast<int64_t>(value);
+        },
+        [&context] (const core::column_t<core::DataType::REAL>& value) {
+            context = context << value;
+        },
+        [&context] (const core::column_t<core::DataType::CHAR>& value) {
+            context = context << value;
+        },
+        [&context] (const core::column_t<core::DataType::STRING>& value) {
+            context = context << core::utils::wstringToUtf8(value);
+        },
+        [&context] (const core::column_t<core::DataType::TEXT_FILE>& value) {
+            context = context << bsoncxx::builder::stream::open_document
+                              << "file_name" << core::utils::wstringToUtf8(value.name)
+                              << "data" << value.data
+                              << bsoncxx::builder::stream::close_document;
+        },
+        [&context] (const core::column_t<core::DataType::INTERVAL_INTEGER>& value) {
+            context = context << static_cast<int64_t>(value.data);
+        },
+        [] (auto&& value) { throw std::logic_error("Not implemented writing data of this type to custom file."); }
+    };
+
+    for (size_t i = 1; i < row.size(); ++i) {
+        std::visit(visitor, row[i]);
+    }
+
+    context << bsoncxx::builder::stream::close_array;
+
+    coll.insert_one(builder.view());
+}
+
+void writeTable(mongocxx::database& mongoDb, const core::VirtualTable& table)
+{
+    mongocxx::collection coll = mongoDb[core::utils::wstringToUtf8(table.name())];
+    table.forAllRow([&coll] (size_t, const core::Row& row) {
+        writeRow(coll, row);
+    });
+}
+
+void writeTables(mongocxx::database& mongoDb, const core::VirtualDatabase& db)
+{
+    db.forAllTable([&mongoDb] (const core::VirtualTable& table) {
+        writeTable(mongoDb, table);
+    });
+}
+
 } // anon namespace
 
 void core::save_load::MongoDbStrategy::save(const VirtualDatabase& db) const
@@ -71,6 +136,7 @@ void core::save_load::MongoDbStrategy::save(const VirtualDatabase& db) const
     mongoDb.drop();
 
     writeTablesInfo(mongoDb, db);
+    writeTables(mongoDb, db);
 }
 
 auto core::save_load::MongoDbStrategy::load() const -> std::unique_ptr<VirtualDatabase>
