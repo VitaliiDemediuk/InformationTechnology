@@ -32,6 +32,7 @@ class MongoDbStrategy: public AbstractStrategy
 public:
     explicit MongoDbStrategy(MongoDbInfo mongoDbInfo);
 
+    // AbstractStrategy
     void save(const VirtualDatabase &db) const final;
     std::unique_ptr<VirtualDatabase> load() const final;
 

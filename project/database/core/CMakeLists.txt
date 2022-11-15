@@ -15,7 +15,8 @@ add_library(core src/ColumnUtils.cpp             include/ColumnUtils.h
                  src/CustomSaveLoadStrategy.cpp  include/CustomSaveLoadStrategy.h
                  src/MongoDbSaveLoadStrategy.cpp include/MongoDbSaveLoadStrategy.h
                                                  include/SaveLoadUtils.h
-                 src/StringUtils.cpp             include/StringUtils.h)
+                 src/StringUtils.cpp             include/StringUtils.h
+                 src/SQLiteSaveLoadStrategy.cpp  include/SQLiteSaveLoadStrategy.h)
 
 include_directories(${LIBMONGOCXX_INCLUDE_DIR})
 include_directories(${LIBBSONCXX_INCLUDE_DIR})
@@ -25,7 +26,10 @@ include_directories("/usr/local/include/libmongoc-1.0")
 include_directories("/usr/local/include/libbson-1.0")
 include_directories("/usr/local/lib")
 
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../thirdparty/SQLiteCpp build)
+
 target_link_libraries(core PRIVATE ${LIBMONGOCXX_LIBRARIES})
 target_link_libraries(core PRIVATE ${LIBBSONCXX_LIBRARIES})
+target_link_libraries(core PRIVATE SQLiteCpp)
 
 target_include_directories(core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

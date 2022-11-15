@@ -39,6 +39,7 @@ private slots:
     bool save();
     bool saveAs();
     void openFromCustomFormatFile();
+    void openFromSQLiteFile();
     void loadFromMongoDb();
 
 private:

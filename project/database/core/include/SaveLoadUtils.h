@@ -21,9 +21,15 @@ struct MongoDbInfo
     uint16_t port;
 };
 
+struct SQLiteInfo
+{
+    std::filesystem::path filePath;
+};
+
 using Information = std::variant<std::monostate,
                                  CustomFileInfo,
-                                 MongoDbInfo>;
+                                 MongoDbInfo,
+                                 SQLiteInfo>;
 
 } // core
 

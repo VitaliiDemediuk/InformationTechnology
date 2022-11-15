@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <MongoDbSaveLoadStrategy.h>
+#include <SQLiteSaveLoadStrategy.h>
 
 // Dialogs
 #include "NewDbDialog.h"
@@ -110,6 +111,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->acOpenFromCustomFormatFile, &QAction::triggered, this, &MainWindow::openFromCustomFormatFile);
     connect(ui->acLoadFromMongoDb, &QAction::triggered, this, &MainWindow::loadFromMongoDb);
+    connect(ui->acOpenFromSQLite, &QAction::triggered, this, &MainWindow::openFromSQLiteFile);
 
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
@@ -347,9 +349,24 @@ void MainWindow::openFromCustomFormatFile()
         return;
     }
 
-    auto filename = QFileDialog::getOpenFileName(this, "Open file", "","Database (*.db)");
+    auto filename = QFileDialog::getOpenFileName(this, "Open file", "","Database (*.cdb)");
     if (!filename.isEmpty()) {
         core::save_load::CustomFileStrategy saveLoadStrategy{{.filePath = filename.toStdWString()}};
+        auto newDb = saveLoadStrategy.load();
+        d->dbClient.setNewDatabase(std::move(newDb));
+        refresh();
+    }
+}
+
+void MainWindow::openFromSQLiteFile()
+{
+    if (proposeSavingsIfNecessary() == Continue::NO) {
+        return;
+    }
+
+    auto filename = QFileDialog::getOpenFileName(this, "Open SQLite file", "","Database (*.db3)");
+    if (!filename.isEmpty()) {
+        core::save_load::SQLiteStrategy saveLoadStrategy{{.filePath = filename.toStdWString()}};
         auto newDb = saveLoadStrategy.load();
         d->dbClient.setNewDatabase(std::move(newDb));
         refresh();

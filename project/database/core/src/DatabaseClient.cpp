@@ -6,6 +6,8 @@
 
 // boost
 #include <boost/throw_exception.hpp>
+
+// Local
 #include <Commands.h>
 
 const std::wstring& core::DatabaseClient::databaseName() const
