@@ -18,7 +18,8 @@ desktop::ColumnInfoDialog::ColumnInfoDialog(const core::VirtualColumnNameValidat
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
     for (int i = 0; i < static_cast<int>(core::DataType::NN); ++i) {
-        ui->typeComboBox->addItem(QString::fromStdWString(dataTypeName(static_cast<core::DataType>(i))));
+        auto typeName = dataTypeName(static_cast<core::DataType>(i));
+        ui->typeComboBox->addItem(QString::fromStdWString({typeName.data(), typeName.length()}));
     }
 
     ui->lowerSpinBox->setVisible(false);

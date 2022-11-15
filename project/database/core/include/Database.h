@@ -8,6 +8,7 @@
 #include "AbstractTableFactory.h"
 #include "VirtualDatabase.h"
 #include "CustomSaveLoadStrategy.h"
+#include "MongoDbSaveLoadStrategy.h"
 
 namespace core
 {

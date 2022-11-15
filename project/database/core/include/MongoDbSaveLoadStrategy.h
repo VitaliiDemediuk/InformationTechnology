@@ -8,20 +8,40 @@
 #include "AbstractSaveLoadStrategy.h"
 #include "SaveLoadUtils.h"
 
-namespace core::save_load
+// MongoDb
+//
+
+namespace mongocxx {
+inline namespace v_noabi
+{
+    class database;
+}
+}
+
+namespace core
 {
 
-class MongoDbStrategy : public AbstractStrategy
+class VirtualTable;
+class CustomTable;
+
+namespace save_load
+{
+
+class MongoDbStrategy: public AbstractStrategy
 {
 public:
     explicit MongoDbStrategy(MongoDbInfo mongoDbInfo);
 
-    void save(const VirtualDatabase& db) const final;
+    void save(const VirtualDatabase &db) const final;
     std::unique_ptr<VirtualDatabase> load() const final;
 
 private:
+    void readRows(mongocxx::database &mongoDb, CustomTable &table) const;
+
     MongoDbInfo fMongoDbInfo;
 };
+
+} // save_load
 
 } // core
 

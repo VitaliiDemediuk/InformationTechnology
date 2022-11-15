@@ -9,6 +9,7 @@
 #include "VirtualTable.h"
 #include "AbstractTableFactory.h"
 #include "CustomSaveLoadStrategy.h"
+#include "MongoDbSaveLoadStrategy.h"
 
 namespace core
 {
@@ -49,6 +50,7 @@ public:
 
 private:
     friend class save_load::CustomFileStrategy;
+    friend class save_load::MongoDbStrategy;
 
     std::atomic<size_t> lastId = 1;
     const TableId fId;

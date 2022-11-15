@@ -1,10 +1,12 @@
 #ifndef COLUMNUTILS_H
 #define COLUMNUTILS_H
 
+// STL
 #include <vector>
 #include <variant>
 #include <string>
 #include <memory>
+#include <optional>
 
 namespace core
 {
@@ -20,7 +22,8 @@ enum class DataType
     NN
 };
 
-std::wstring dataTypeName(DataType t);
+std::wstring_view dataTypeName(DataType t);
+std::optional<DataType> dataTypeFromString(std::wstring_view str);
 
 template <typename T>
 struct IntervalType {

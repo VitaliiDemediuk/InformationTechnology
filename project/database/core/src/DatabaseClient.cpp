@@ -6,6 +6,7 @@
 
 // boost
 #include <boost/throw_exception.hpp>
+#include <Commands.h>
 
 const std::wstring& core::DatabaseClient::databaseName() const
 {
@@ -54,7 +55,12 @@ void core::DatabaseClient::exec(std::unique_ptr<AbstractCommand> cmd)
         BOOST_THROW_EXCEPTION(std::logic_error("There is no database!"));
     }
     cmd->exec(*fDb);
-    fHaveChanges = true;
+    if (dynamic_cast<command::SaveDatabase*>(cmd.get())) {
+        fHaveChanges = false;
+    } else {
+        fHaveChanges = true;
+    }
+
 }
 
 bool core::DatabaseClient::validateDatabaseName(const std::wstring& name) const
