@@ -91,7 +91,7 @@ int desktop::ColumnInfoDialog::exec(const core::VirtualColumnInfo& columnInfo, s
 
     if (const auto* info = dynamic_cast<const core::IntervalIntColumnInfo*>(&columnInfo)) {
         ui->lowerSpinBox->setValue(info->lowerLimit());
-        ui->lowerSpinBox->setValue(info->upperLimit());
+        ui->upperSpinBox->setValue(info->upperLimit());
     }
 
     if (const auto res = Super::exec()) {
