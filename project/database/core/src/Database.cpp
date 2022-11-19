@@ -6,6 +6,7 @@
 // boost
 #include <boost/throw_exception.hpp>
 #include <MongoDbSaveLoadStrategy.h>
+#include <SQLiteSaveLoadStrategy.h>
 
 core::Database::Database(std::wstring name, std::unique_ptr<const AbstractTableFactory> factory)
     : fName(std::move(name)), fTableFactory{std::move(factory)} {}
@@ -27,6 +28,9 @@ void core::Database::saveDatabase(const core::save_load::Information& saveInfo)
         if (std::holds_alternative<core::save_load::CustomFileInfo>(saveInfo)) {
             return std::make_unique<save_load::CustomFileStrategy>(std::get<core::save_load::CustomFileInfo>(saveInfo));
         }
+        if (std::holds_alternative<core::save_load::SQLiteInfo>(saveInfo)) {
+            return std::make_unique<save_load::SQLiteStrategy>(std::get<core::save_load::SQLiteInfo>(saveInfo));
+        }
         if (std::holds_alternative<core::save_load::MongoDbInfo>(saveInfo)) {
             return std::make_unique<save_load::MongoDbStrategy>(std::get<core::save_load::MongoDbInfo>(saveInfo));
         }
@@ -36,6 +40,12 @@ void core::Database::saveDatabase(const core::save_load::Information& saveInfo)
 
     if (std::holds_alternative<core::save_load::CustomFileInfo>(saveInfo)) {
         auto newName = std::get<core::save_load::CustomFileInfo>(saveInfo).filePath.stem().wstring();
+        changeName(std::move(newName));
+    } else if (std::holds_alternative<core::save_load::SQLiteInfo>(saveInfo)) {
+        auto newName = std::get<core::save_load::SQLiteInfo>(saveInfo).filePath.stem().wstring();
+        changeName(std::move(newName));
+    } else if (std::holds_alternative<core::save_load::MongoDbInfo>(saveInfo)) {
+        auto newName = std::get<core::save_load::MongoDbInfo>(saveInfo).dbName;
         changeName(std::move(newName));
     }
 }

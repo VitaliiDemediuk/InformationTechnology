@@ -21,9 +21,21 @@ desktop::SaveDatabaseDialog::SaveDatabaseDialog(QWidget* parent) :
         const auto dialogPath = customFileInfo.has_value() ? QString::fromStdWString(customFileInfo->filePath.wstring())
                                                            : QString{};
         const auto fileName = QFileDialog::getSaveFileName(this, "Save database", dialogPath,
-                                                                 "Database (*.db)");
+                                                                 "Database (*.cdb)");
         if (!fileName.isEmpty()) {
-            customFileInfo->filePath = fileName.toStdWString();
+            customFileInfo.emplace(core::save_load::CustomFileInfo{.filePath = fileName.toStdWString()});
+        }
+
+        refresh();
+    });
+
+    connect(ui->selectSqliteDbBtn, &QPushButton::clicked, this, [this] () {
+        const auto dialogPath = sqliteDbInfo.has_value() ? QString::fromStdWString(sqliteDbInfo->filePath.wstring())
+                                                         : QString{};
+        const auto fileName = QFileDialog::getSaveFileName(this, "Save SQLite database", dialogPath,
+                                                                 "Database (*.db *.db3)");
+        if (!fileName.isEmpty()) {
+            sqliteDbInfo.emplace(core::save_load::SQLiteInfo{.filePath = fileName.toStdWString()});
         }
 
         refresh();
@@ -59,7 +71,14 @@ void desktop::SaveDatabaseDialog::refresh()
         }
     } else if (ui->sqlitePageRb->isChecked()) {
         ui->stackedWidget->setCurrentWidget(ui->sqlitePage);
-        haveValidSaveInfo = false;
+        if (sqliteDbInfo.has_value()) {
+            const auto& info = *sqliteDbInfo;
+            haveValidSaveInfo = true;
+            ui->sqliteFileLb->setText(QString::fromStdWString(info.filePath.wstring()));
+        } else {
+            haveValidSaveInfo = false;
+            ui->sqliteFileLb->setText("No database");
+        }
     } else if (ui->mongoDbPageRb->isChecked()) {
         if (mongoDbInfo.has_value()) {
             haveValidSaveInfo = !mongoDbInfo->ipAddress.empty();
@@ -102,6 +121,10 @@ void desktop::SaveDatabaseDialog::setInfo(const core::save_load::Information& in
             ui->customFormatRb->setChecked(true);
             customFileInfo.emplace(info);
         },
+        [this] (const core::save_load::SQLiteInfo& info) {
+            ui->sqlitePageRb->setChecked(true);
+            sqliteDbInfo.emplace(info);
+        },
         [this] (const core::save_load::MongoDbInfo& info) {
             ui->mongoDbPageRb->setChecked(true);
             mongoDbInfo.emplace(info);
@@ -118,6 +141,9 @@ core::save_load::Information desktop::SaveDatabaseDialog::getInfo()
     if (ui->customFormatRb->isChecked() && customFileInfo.has_value()) {
         res = std::move(*customFileInfo);
         customFileInfo.reset();
+    } else if (ui->sqlitePageRb->isChecked() && sqliteDbInfo.has_value()) {
+        res = std::move(*sqliteDbInfo);
+        sqliteDbInfo.reset();
     } else if (ui->mongoDbPageRb->isChecked() && mongoDbInfo.has_value()) {
         res = std::move(*mongoDbInfo);
         mongoDbInfo.reset();

@@ -42,6 +42,7 @@ private:
     std::unique_ptr<Ui::SaveDatabaseDialog> ui;
 
     std::optional<core::save_load::CustomFileInfo> customFileInfo;
+    std::optional<core::save_load::SQLiteInfo> sqliteDbInfo;
     std::optional<core::save_load::MongoDbInfo> mongoDbInfo;
 };
 

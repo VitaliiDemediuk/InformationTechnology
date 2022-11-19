@@ -100,11 +100,31 @@
       </layout>
      </widget>
      <widget class="QWidget" name="sqlitePage">
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="sqliteFileLb">
          <property name="text">
-          <string>SQLite</string>
+          <string>SQLite database</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="sqlitePageSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>194</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="selectSqliteDbBtn">
+         <property name="text">
+          <string>Select SQLite db</string>
          </property>
         </widget>
        </item>

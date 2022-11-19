@@ -104,6 +104,7 @@ namespace {
         }
         query.append(L");");
 
+        sqlDb.exec(core::utils::wstringToUtf8(query));
     }
 
     void writeTable(SQLite::Database& sqlDb, const core::VirtualTable& table)
