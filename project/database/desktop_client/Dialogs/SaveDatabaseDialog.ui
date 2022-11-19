@@ -100,7 +100,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="sqlitePage">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="sqlitePageLayout">
        <item>
         <widget class="QLabel" name="sqliteFileLb">
          <property name="text">
@@ -131,7 +131,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="mongoDbPage">
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="mongoDbPageLayout">
        <item>
         <spacer name="mongoDbSpacer">
          <property name="orientation">
