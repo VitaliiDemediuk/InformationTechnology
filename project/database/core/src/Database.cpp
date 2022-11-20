@@ -19,6 +19,7 @@ const std::wstring& core::Database::name() const
 bool core::Database::changeName(std::wstring name)
 {
     fName = std::move(name);
+    return true;
 }
 
 void core::Database::saveDatabase(const core::save_load::Information& saveInfo)
@@ -60,7 +61,11 @@ void core::Database::deleteDatabase()
 
 core::VirtualTable& core::Database::table(TableId id)
 {
-    return const_cast<core::VirtualTable&>(static_cast<const Database*>(this)->table(id));
+    const auto it = fTables.find(id);
+    if (it == fTables.end()) {
+        BOOST_THROW_EXCEPTION(std::logic_error("Invalid table id!"));
+    }
+    return *it->second;
 }
 
 const core::VirtualTable& core::Database::table(TableId id) const
@@ -77,7 +82,7 @@ size_t core::Database::tableCount() const
     return fTables.size();
 }
 
-void core::Database::forAllTable(std::function<void(const VirtualTable&)> worker) const
+void core::Database::forAllTable(const std::function<void(const VirtualTable&)>& worker) const
 {
     for (const auto& [_, table] : fTables) {
         worker(*table);
@@ -107,20 +112,23 @@ core::VirtualTable& core::Database::createCartesianProduct(TableId firstId, Tabl
 
     auto& newTable = createTable(firstTable.name() + L" * " + secondTable.name());
 
-    const size_t newTableColumnsCount = firstTable.columnCount() + secondTable.columnCount() - 2;
+    for (size_t i = 1; i < secondTable.columnCount(); ++i) {
+        auto columnInfo = secondTable.column(i).clone();
+        columnInfo->changeName(secondTable.name() + L"_" + columnInfo->name());
+        newTable.createColumn(std::move(columnInfo));
+    }
 
     for (size_t i = 1; i < firstTable.columnCount(); ++i) {
-        newTable.createColumn(firstTable.column(i).clone());
+        auto columnInfo = firstTable.column(i).clone();
+        columnInfo->changeName(firstTable.name() + L"_" + columnInfo->name());
+        newTable.createColumn(std::move(columnInfo));
     }
 
-    for (size_t i = 1; i < secondTable.columnCount(); ++i) {
-        newTable.createColumn(secondTable.column(i).clone());
-    }
 
-    const auto rowId = newTable.createRow();
+    firstTable.forAllRow([&newTable, &secondTable] (size_t, const Row& firstTableRow) {
+        secondTable.forAllRow([&newTable, &firstTableRow] (size_t, const Row& secondTableRow) {
+            const auto rowId = newTable.createRow();
 
-    firstTable.forAllRow([rowId, &newTable, &secondTable] (size_t, const Row& firstTableRow) {
-        secondTable.forAllRow([rowId, &newTable, &firstTableRow] (size_t, const Row& secondTableRow) {
             for (size_t i = 1; i < firstTableRow.size(); ++i) {
                 newTable.setNewValue(rowId, i, firstTableRow[i]);
             }
@@ -130,6 +138,8 @@ core::VirtualTable& core::Database::createCartesianProduct(TableId firstId, Tabl
             }
         });
     });
+
+    return newTable;
 }
 
 bool core::Database::validateTableName(const std::wstring& name) const

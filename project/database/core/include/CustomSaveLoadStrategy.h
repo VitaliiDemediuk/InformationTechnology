@@ -13,6 +13,7 @@ namespace core
 
 class VirtualTable;
 class CustomTable;
+class Database;
 
 namespace save_load
 {
@@ -27,7 +28,7 @@ public:
     std::unique_ptr<VirtualDatabase> load() const final;
 private:
     void readRows(std::ifstream& stream, CustomTable& table) const;
-    std::unique_ptr<VirtualTable> readTable(std::ifstream& stream) const;
+    void readTable(std::ifstream& stream, core::Database& db) const;
 
     const CustomFileInfo fSaveLoadInfo;
 };

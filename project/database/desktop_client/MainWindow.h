@@ -41,6 +41,7 @@ private slots:
     void openFromCustomFormatFile();
     void openFromSQLiteFile();
     void loadFromMongoDb();
+    void createCartesianProduct();
 
 private:
     enum class Continue : bool { NO = false, YES = true};

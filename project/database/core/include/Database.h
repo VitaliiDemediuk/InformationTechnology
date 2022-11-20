@@ -35,7 +35,7 @@ public:
     VirtualTable& table(TableId id) final;
     const VirtualTable& table(TableId id) const final;
     size_t tableCount() const final;
-    void forAllTable(std::function<void(const VirtualTable&)> worker) const final;
+    void forAllTable(const std::function<void(const VirtualTable&)>& worker) const final;
 
     VirtualTable& createTable(std::wstring name) final;
     void deleteTable(TableId id) final;

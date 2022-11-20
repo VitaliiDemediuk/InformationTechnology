@@ -19,6 +19,8 @@ class DatabaseClient: public core::DatabaseClient
 public:
     void resetModel(desktop::DbResetableModel& model) const;
     void resetModel(std::optional<core::TableId> tableId, desktop::TableResetableModel& model) const;
+
+    void forAllTables(const std::function<void(const core::VirtualTable&)>& func) const;
 };
 
 } // desktop

@@ -235,14 +235,17 @@ void core::save_load::CustomFileStrategy::readRows(std::ifstream& stream, core::
     }
 }
 
-std::unique_ptr<core::VirtualTable> core::save_load::CustomFileStrategy::readTable(std::ifstream& stream) const
+void core::save_load::CustomFileStrategy::readTable(std::ifstream& stream, core::Database& db) const
 {
     auto tableName = readString<wchar_t>(stream);
-    auto tableId = readTrivial<core::TableId>(stream);
-    auto table = std::make_unique<core::CustomTable>(tableId, std::move(tableName));
-    readColumns(stream, *table);
-    readRows(stream, *table);
-    return table;
+    (void)readTrivial<core::TableId>(stream);
+    auto& table = db.createTable(tableName);
+    if (auto* customTable = dynamic_cast<core::CustomTable*>(&table)) {
+        readColumns(stream, *customTable);
+        readRows(stream, *customTable);
+    } else {
+        throw std::logic_error("Custom format db loading. Not implemented!");
+    }
 }
 
 std::unique_ptr<core::VirtualDatabase> core::save_load::CustomFileStrategy::load() const
@@ -257,8 +260,7 @@ std::unique_ptr<core::VirtualDatabase> core::save_load::CustomFileStrategy::load
 
     const auto tableCount = readTrivial<size_t>(stream);
     for (size_t i = 0; i < tableCount; ++i) {
-        auto table = readTable(stream);
-        db->fTables[table->id()] = std::move(table);
+        readTable(stream, *db);
     }
 
     db->fLastSaveInfo = fSaveLoadInfo;

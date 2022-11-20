@@ -14,6 +14,7 @@
 #include "ColumnInfoDialog.h"
 #include "SaveDatabaseDialog.h"
 #include "LoadFromMongoDbDialog.h"
+#include "CreateCartesianProductDialog.h"
 
 // Models
 #include "TableListModel.h"
@@ -74,6 +75,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tableListView->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
     // Signal-slot connections
     connect(ui->acNewDatabase, &QAction::triggered, this, &MainWindow::createNewDatabase);
     connect(ui->createNewTableBtn, &QPushButton::clicked, this, &MainWindow::createNewTable);
@@ -112,6 +115,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->acOpenFromCustomFormatFile, &QAction::triggered, this, &MainWindow::openFromCustomFormatFile);
     connect(ui->acLoadFromMongoDb, &QAction::triggered, this, &MainWindow::loadFromMongoDb);
     connect(ui->acOpenFromSQLite, &QAction::triggered, this, &MainWindow::openFromSQLiteFile);
+
+    connect(ui->acCartesianProduct, &QAction::triggered, this, &MainWindow::createCartesianProduct);
 
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
@@ -390,6 +395,23 @@ void MainWindow::loadFromMongoDb()
     }
 }
 
+void MainWindow::createCartesianProduct()
+{
+    std::vector<std::pair<size_t, std::wstring>> tableList;
+    d->dbClient.forAllTables([&tableList] (const core::VirtualTable& table) {
+        tableList.emplace_back(table.id(), table.name());
+    });
+
+    core::TableId firstTableId{};
+    core::TableId secondTableId{};
+    desktop::CreateCartesianProductDialog dialog(this);
+    if (dialog.exec(tableList, firstTableId, secondTableId)) {
+        auto cmd = std::make_unique<core::command::CreateCartesianProduct>(firstTableId, secondTableId);
+        d->dbClient.exec(std::move(cmd));
+        refresh();
+    }
+}
+
 /////////////// Private ////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MainWindow::reenable()
@@ -399,6 +421,7 @@ void MainWindow::reenable()
     ui->mainWidget->setEnabled(d->dbClient.hasDatabase() && d->currentTableId.has_value());
     ui->acSave->setEnabled(d->dbClient.hasDatabase());
     ui->acSaveAs->setEnabled(d->dbClient.hasDatabase());
+    ui->acCartesianProduct->setEnabled(d->dbClient.hasDatabase());
 
     if (d->currentTableId) {
         const auto* table = d->dbClient.table(d->currentTableId.value());

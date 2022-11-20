@@ -138,6 +138,8 @@
     <addaction name="menuOpen_database"/>
     <addaction name="acSave"/>
     <addaction name="acSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="acCartesianProduct"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -173,6 +175,11 @@
   <action name="acLoadFromMongoDb">
    <property name="text">
     <string>MongoDb</string>
+   </property>
+  </action>
+  <action name="acCartesianProduct">
+   <property name="text">
+    <string>Cartesian product</string>
    </property>
   </action>
  </widget>
