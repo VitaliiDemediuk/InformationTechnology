@@ -266,7 +266,81 @@ auto getColumnInfo(const SQLiteColumnInfo& sqliteColumnInfo, const std::wstring&
     return colInfo;
 }
 
-void getTableFromSQLiteDb(SQLite::Database& sqlDb, core::VirtualTable& table)
+core::CellData readCell(SQLite::Statement& st, core::DataType type, size_t i)
+{
+    auto sqlCell = st.getColumn(i);
+    if (sqlCell.isNull()) {
+        return std::monostate();
+    }
+
+    switch (type) {
+    case core::DataType::INTEGER: {
+        return static_cast<core::column_t<core::DataType::INTEGER>>(sqlCell.getInt64());
+    }
+    case core::DataType::REAL: {
+        return static_cast<core::column_t<core::DataType::REAL>>(sqlCell.getDouble());
+    }
+    case core::DataType::CHAR: {
+        const auto str = core::utils::utf8ToWstring(sqlCell.getString());
+        return str.at(0);
+    }
+    case core::DataType::STRING: {
+        return core::utils::utf8ToWstring(sqlCell.getString());
+    }
+    case core::DataType::TEXT_FILE: {
+        core::File file;
+
+        auto* blobData = reinterpret_cast<const char*>(sqlCell.getBlob());
+        auto size = sqlCell.getBytes();
+
+        // read filename size
+        const auto filenameSize = *reinterpret_cast<const size_t*>(blobData);
+        blobData += sizeof(size_t);
+        size -= sizeof(size_t);
+
+        // read filename
+        file.name = core::utils::utf8ToWstring(std::string_view(blobData, filenameSize));
+        blobData += filenameSize;
+        size -= static_cast<int>(filenameSize);
+
+        // read file data
+        file.data = std::string(blobData, size);
+
+        return file;
+    }
+    case core::DataType::INTERVAL_INTEGER: {
+        core::column_t<core::DataType::INTERVAL_INTEGER> interval;
+        interval.data = static_cast<core::column_t<core::DataType::INTEGER>>(sqlCell.getInt64());
+        return interval;
+    }
+    case core::DataType::NN: {
+        throw std::logic_error("SQLite. Invalid data type during database reading,");
+    }
+    }
+    return std::monostate{};
+}
+
+} // anon namespace
+
+void core::save_load::SQLiteStrategy::readRows(SQLite::Database& sqlDb, core::CustomTable& table) const
+{
+    const auto selectAllQuery = (boost::wformat(L"SELECT * FROM %1%;") % table.name()).str();
+
+    SQLite::Statement statement(sqlDb, core::utils::wstringToUtf8(selectAllQuery));
+
+    while (statement.executeStep()) {
+        core::Row row(table.columnCount());
+
+        for (size_t i = 0; i < table.columnCount(); ++i) {
+            row[i] = readCell(statement, table.column(i).dataType(), i);
+        }
+
+        const auto rowId = std::get<core::column_t<core::DataType::INTEGER>>(row[0]);
+        table.fTable[rowId] = std::move(row);
+    }
+}
+
+void core::save_load::SQLiteStrategy::getTableFromSQLiteDb(SQLite::Database& sqlDb, core::VirtualTable& table) const
 {
     const auto& tableName = table.name();
     const auto sqliteColumnsInfo = getTableColumnNames(sqlDb, tableName);
@@ -279,9 +353,15 @@ void getTableFromSQLiteDb(SQLite::Database& sqlDb, core::VirtualTable& table)
     for (size_t i = 1; i < sqliteColumnsInfo.size(); ++i) {
         table.createColumn(getColumnInfo(sqliteColumnsInfo[i], createTableQuery));
     }
+
+    if (auto* customTable = dynamic_cast<core::CustomTable*>(&table)) {
+        readRows(sqlDb, *customTable);
+    } else {
+        throw std::logic_error("SQLite db loading. Not implemented!");
+    }
 }
 
-void getTablesFromSQLiteDb(SQLite::Database& sqlDb, core::Database& db)
+void core::save_load::SQLiteStrategy::getTablesFromSQLiteDb(SQLite::Database& sqlDb, core::Database& db) const
 {
     const auto tableNames = getTableNames(sqlDb);
     for (const auto& tableName : tableNames) {
@@ -289,8 +369,6 @@ void getTablesFromSQLiteDb(SQLite::Database& sqlDb, core::Database& db)
         getTableFromSQLiteDb(sqlDb, table);
     }
 }
-
-} // anon namespace
 
 std::unique_ptr<core::VirtualDatabase> core::save_load::SQLiteStrategy::load() const
 {
