@@ -26,7 +26,7 @@ include_directories("/usr/local/include/libmongoc-1.0")
 include_directories("/usr/local/include/libbson-1.0")
 include_directories("/usr/local/lib")
 
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../thirdparty/SQLiteCpp build)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../thirdparty/SQLiteCpp SQLiteCpp)
 
 target_link_libraries(core PRIVATE ${LIBMONGOCXX_LIBRARIES})
 target_link_libraries(core PRIVATE ${LIBBSONCXX_LIBRARIES})
