@@ -100,9 +100,36 @@ void core::Database::deleteTable(TableId id)
     fTables.erase(it);
 }
 
-core::VirtualTable& core::Database::productTables(TableId firstId, TableId secondId)
+core::VirtualTable& core::Database::createCartesianProduct(TableId firstId, TableId secondId)
 {
+    const auto& firstTable = table(firstId);
+    const auto& secondTable = table(secondId);
 
+    auto& newTable = createTable(firstTable.name() + L" * " + secondTable.name());
+
+    const size_t newTableColumnsCount = firstTable.columnCount() + secondTable.columnCount() - 2;
+
+    for (size_t i = 1; i < firstTable.columnCount(); ++i) {
+        newTable.createColumn(firstTable.column(i).clone());
+    }
+
+    for (size_t i = 1; i < secondTable.columnCount(); ++i) {
+        newTable.createColumn(secondTable.column(i).clone());
+    }
+
+    const auto rowId = newTable.createRow();
+
+    firstTable.forAllRow([rowId, &newTable, &secondTable] (size_t, const Row& firstTableRow) {
+        secondTable.forAllRow([rowId, &newTable, &firstTableRow] (size_t, const Row& secondTableRow) {
+            for (size_t i = 1; i < firstTableRow.size(); ++i) {
+                newTable.setNewValue(rowId, i, firstTableRow[i]);
+            }
+            const auto nFirstTableRowCells = firstTableRow.size();
+            for (size_t i = 1; i < secondTableRow.size(); ++i) {
+                newTable.setNewValue(rowId, nFirstTableRowCells + i - 1,secondTableRow[i]);
+            }
+        });
+    });
 }
 
 bool core::Database::validateTableName(const std::wstring& name) const

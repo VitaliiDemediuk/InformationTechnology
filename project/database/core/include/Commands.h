@@ -111,6 +111,17 @@ private:
     CellData data;
 };
 
+class CreateCartesianProduct: public AbstractCommand
+{
+public:
+    explicit CreateCartesianProduct(TableId firstTableId, TableId secondTableId);
+
+    void exec(VirtualDatabase& db) final;
+private:
+    const TableId fFirstTableId;
+    const TableId fSecondTableId;
+};
+
 class SaveDatabase: public AbstractCommand
 {
 public:

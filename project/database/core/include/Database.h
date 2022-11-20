@@ -39,7 +39,7 @@ public:
 
     VirtualTable& createTable(std::wstring name) final;
     void deleteTable(TableId id) final;
-    VirtualTable& productTables(TableId firstId, TableId secondId) final;
+    VirtualTable& createCartesianProduct(TableId firstId, TableId secondId) final;
 
     // VirtualValidator
     bool validateTableName(const std::wstring& name) const final;

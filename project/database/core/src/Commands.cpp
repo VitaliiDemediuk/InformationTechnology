@@ -93,6 +93,16 @@ void core::command::EditCell::exec(VirtualDatabase& db)
     db.table(fTableId).setNewValue(fRowId, fColumnIdx, std::move(data));
 }
 
+/////////////// CreateCartesianProduct /////////////////////////////////////////////////////////////////////////////////
+
+core::command::CreateCartesianProduct::CreateCartesianProduct(TableId firstTableId, TableId secondTableId)
+ : fFirstTableId{firstTableId}, fSecondTableId{secondTableId} {}
+
+void core::command::CreateCartesianProduct::exec(VirtualDatabase& db)
+{
+    db.createCartesianProduct(fFirstTableId, fSecondTableId);
+}
+
 /////////////// SaveDatabase ///////////////////////////////////////////////////////////////////////////////////////////
 
 core::command::SaveDatabase::SaveDatabase(core::save_load::Information saveInfo)
