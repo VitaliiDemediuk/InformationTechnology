@@ -113,9 +113,60 @@ namespace {
         sqlDb.exec(core::utils::wstringToUtf8(query));
     }
 
+    // helper type for the visitor #4
+    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+    // explicit deduction guide (not needed as of C++20)
+    template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+    void writeRow(SQLite::Database& sqlDb, const std::wstring& tableName, const core::Row& row)
+    {
+        std::wstring query = (boost::wformat(LR"(INSERT INTO "%1%" VALUES ()") % tableName).str();
+        for (size_t i = 0; i < row.size() - 1; ++i) {
+            query.append(L"?, ");
+        }
+        query.append(L"?);");
+
+        SQLite::Statement st(sqlDb, core::utils::wstringToUtf8(query));
+        for (int i = 1; i <= row.size(); ++i) {
+            std::visit(overloaded {
+                       [i, &st] (const std::monostate& value) { st.bind(i); },
+                       [i, &st] (const core::column_t<core::DataType::INTEGER>& value) { st.bind(i, static_cast<int64_t>(value)); },
+                       [i, &st] (const core::column_t<core::DataType::REAL>& value) { st.bind(i, value); },
+                       [i, &st] (const core::column_t<core::DataType::CHAR>& value) { st.bind(i, core::utils::wstringToUtf8(std::wstring(1, value))); },
+                       [i, &st] (const core::column_t<core::DataType::STRING>& value) { st.bind(i, core::utils::wstringToUtf8(value)); },
+                       [i, &st] (const core::column_t<core::DataType::TEXT_FILE>& value) {
+                            const std::string nameUtf8 = core::utils::wstringToUtf8(value.name);
+                            const size_t blobDataSize = sizeof(size_t) + nameUtf8.size() + value.data.size();
+                            std::unique_ptr<char[]> blobData(new char[blobDataSize]);
+                            char* ptr = blobData.get();
+
+                            // write filename size
+                            *reinterpret_cast<size_t*>(ptr) = nameUtf8.size();
+                            ptr += sizeof(size_t);
+
+                            // write filename
+                            std::copy(nameUtf8.begin(), nameUtf8.end(), ptr);
+                            ptr += nameUtf8.size();
+
+                            // write data
+                           std::copy(value.data.begin(), value.data.end(), ptr);
+
+                           st.bind(i, reinterpret_cast<void*>(blobData.get()), static_cast<int>(blobDataSize));
+                       },
+                       [i, &st] (const core::column_t<core::DataType::INTERVAL_INTEGER>& value) { st.bind(i, static_cast<int32_t>(value.data)); },
+                       [] (auto&& value) { throw std::logic_error("Not implemented writing data of this type to custom file."); }},
+                       row[i-1]);
+        }
+
+        st.exec();
+    }
+
     void writeTable(SQLite::Database& sqlDb, const core::VirtualTable& table)
     {
         createTable(sqlDb, table);
+        table.forAllRow([&sqlDb, &tableName = table.name()] (size_t, const core::Row& row) {
+            writeRow(sqlDb, tableName, row);
+        });
     }
 
 } // anon namespace
@@ -184,8 +235,6 @@ auto getColumnInfo(const SQLiteColumnInfo& sqliteColumnInfo, const std::wstring&
         }
         return {};
     }();
-
-    std::wcout << createColumnLineWithCheck << std::endl;
 
     std::unique_ptr<core::VirtualColumnInfo> colInfo;
     if (sqliteColumnInfo.type == sql_type::integer) {
