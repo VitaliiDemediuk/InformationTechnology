@@ -55,7 +55,8 @@ qt_add_executable(DatabaseDesktopClient
     ${PROJECT_SOURCES}
 )
 
-target_link_libraries(DatabaseDesktopClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets core
+target_link_libraries(DatabaseDesktopClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
+                                                    core
                                                     ${_REFLECTION}
                                                     ${_GRPC_GRPCPP}
                                                     ${_PROTOBUF_LIBPROTOBUF})

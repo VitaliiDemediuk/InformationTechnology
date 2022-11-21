@@ -3,15 +3,24 @@
 
 #include <database_name.grpc.pb.h>
 
+namespace core {
+    class VirtualDatabase;
+}
+
 namespace db_grpc_server::service
 {
 
 class GetDatabaseName final : public ::DatabaseNameGetter::Service
 {
 public:
+    explicit GetDatabaseName(core::VirtualDatabase& db);
+
     grpc::Status get(grpc::ServerContext* context,
                      const Empty* request,
                      DatabaseNameReply* response) final;
+
+private:
+    core::VirtualDatabase& fDb;
 };
 
 } // db_server::service

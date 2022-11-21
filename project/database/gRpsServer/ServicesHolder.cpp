@@ -14,17 +14,17 @@ struct db_grpc_server::ServicesHolder::Services
     std::vector<std::unique_ptr<grpc::Service>> list;
 };
 
-db_grpc_server::ServicesHolder::ServicesHolder()
-    : services(new ServicesHolder::Services())
+db_grpc_server::ServicesHolder::ServicesHolder(core::VirtualDatabase& db)
+    : fServices(new ServicesHolder::Services())
 {
-    services->list.emplace_back(std::make_unique<service::GetDatabaseName>());
+    fServices->list.emplace_back(std::make_unique<service::GetDatabaseName>(db));
 }
 
 db_grpc_server::ServicesHolder::~ServicesHolder() = default;
 
 void db_grpc_server::ServicesHolder::registerAll(grpc::ServerBuilder& builder)
 {
-    for (auto& service : services->list) {
+    for (auto& service : fServices->list) {
         builder.RegisterService(service.get());
     }
 }

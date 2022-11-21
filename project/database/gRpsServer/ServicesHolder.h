@@ -1,7 +1,12 @@
 #ifndef SERVICESHOLDER_H
 #define SERVICESHOLDER_H
 
+// STL
 #include <memory>
+
+namespace core {
+    class VirtualDatabase;
+}
 
 namespace grpc {
     class ServerBuilder;
@@ -15,13 +20,13 @@ class ServicesHolder
     struct Services;
 
 public:
-    explicit ServicesHolder();
+    explicit ServicesHolder(core::VirtualDatabase& db);
     ~ServicesHolder(); // for PIMPL
 
     void registerAll(grpc::ServerBuilder& builder);
 
 private:
-    std::unique_ptr<Services> services;
+    std::unique_ptr<Services> fServices;
 };
 
 } // grpc_server
