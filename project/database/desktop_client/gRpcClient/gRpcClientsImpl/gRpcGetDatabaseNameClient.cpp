@@ -18,7 +18,7 @@ std::wstring db_grpc_client::DatabaseNameGetter::getName() const
     const auto status = fStub->get(&context, request, &reply);
 
     if (!status.ok()) {
-        throw std::logic_error("db_grpc_client::DatabaseNameGetter. Status is not ok!");
+        throw std::runtime_error("db_grpc_client::DatabaseNameGetter. Status is not ok!");
     }
 
     return core::utils::utf8ToWstring(reply.name());

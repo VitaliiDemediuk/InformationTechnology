@@ -8,6 +8,7 @@
 
 // Services
 #include "Services/GetDatabaseNameService.h"
+#include "Services/GetTableCountService.h"
 
 struct db_grpc_server::ServicesHolder::Services
 {
@@ -18,6 +19,7 @@ db_grpc_server::ServicesHolder::ServicesHolder(core::VirtualDatabase& db)
     : fServices(new ServicesHolder::Services())
 {
     fServices->list.emplace_back(std::make_unique<service::GetDatabaseName>(db));
+    fServices->list.emplace_back(std::make_unique<service::GetTableCount>(db));
 }
 
 db_grpc_server::ServicesHolder::~ServicesHolder() = default;

@@ -27,8 +27,12 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
                                             ${Protobuf_INCLUDE_DIR}/database_name.proto
+                                            ${Protobuf_INCLUDE_DIR}/database_name.proto
+                                            ${Protobuf_INCLUDE_DIR}/table_id.proto
+                                            ${Protobuf_INCLUDE_DIR}/table_count_service.proto
                                             ${Protobuf_INCLUDE_DIR}/empty.proto)
-PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS ${Protobuf_INCLUDE_DIR}/database_getname_service.proto)
+PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
+                                               ${Protobuf_INCLUDE_DIR}/table_count_service.proto)
 
 set(PROJECT_SOURCES
         ${PROTO_SRCS} ${PROTO_HDRS}
@@ -50,6 +54,7 @@ set(PROJECT_SOURCES
         gRpcClient/gRpcDatabase.cpp                 gRpcClient/gRpcDatabase.h
         gRpcClient/gRpcTable.cpp                    gRpcClient/gRpcTable.h
         gRpcClient/gRpcClientsImpl/gRpcGetDatabaseNameClient.cpp gRpcClient/gRpcClientsImpl/gRpcGetDatabaseNameClient.h
+        gRpcClient/gRpcClientsImpl/gRpcGetTableCountClient.cpp   gRpcClient/gRpcClientsImpl/gRpcGetTableCountClient.h
 )
 
 qt_add_executable(DatabaseDesktopClient

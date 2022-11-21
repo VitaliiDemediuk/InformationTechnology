@@ -6,6 +6,7 @@
 // gRpc Clients
 #include "gRpcTable.h"
 #include "gRpcGetDatabaseNameClient.h"
+#include "gRpcGetTableCountClient.h"
 
 // STL
 #include <atomic>
@@ -69,10 +70,11 @@ const core::VirtualTable& db_grpc_client::Database::table(core::TableId id) cons
     return *fCache->lastTable;
 }
 
-/// @todo implement!
 size_t db_grpc_client::Database::tableCount() const
 {
-    return 0;
+    db_grpc_client::TableCountGetter getter(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    return getter.getCount();
 }
 
 /// @todo implement!

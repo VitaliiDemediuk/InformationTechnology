@@ -419,6 +419,8 @@ void MainWindow::createCartesianProduct()
     }
 }
 
+#include <iostream>
+
 void MainWindow::connectTogRpcServer()
 {
     if (proposeSavingsIfNecessary() == Continue::NO) {

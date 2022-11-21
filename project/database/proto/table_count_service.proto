@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "empty.proto";
+
+service TableCountGetter {
+    rpc get (Empty) returns (TableCount) {}
+}
+
+message TableCount {
+    uint64 count = 1;
+}

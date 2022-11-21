@@ -20,13 +20,17 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
                                             ${Protobuf_INCLUDE_DIR}/database_name.proto
+                                            ${Protobuf_INCLUDE_DIR}/table_id.proto
+                                            ${Protobuf_INCLUDE_DIR}/table_count_service.proto
                                             ${Protobuf_INCLUDE_DIR}/empty.proto)
-PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS ${Protobuf_INCLUDE_DIR}/database_getname_service.proto)
+PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
+                                               ${Protobuf_INCLUDE_DIR}/table_count_service.proto)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../core core)
 
 add_executable(gRpsDatabaseServer
                Services/GetDatabaseNameService.cpp Services/GetDatabaseNameService.h
+               Services/GetTableCountService.cpp   Services/GetTableCountService.h
                ServicesHolder.cpp ServicesHolder.h
                ${PROTO_SRCS} ${PROTO_HDRS}
                ${GRPC_SRCS}  ${GRPC_HDRS}
