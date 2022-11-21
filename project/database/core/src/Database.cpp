@@ -56,6 +56,7 @@ const core::save_load::Information& core::Database::lastSaveInfo() const
     return fLastSaveInfo;
 }
 
+/// @todo implement!
 void core::Database::deleteDatabase()
 {}
 

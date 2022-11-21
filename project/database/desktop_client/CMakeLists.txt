@@ -48,6 +48,7 @@ set(PROJECT_SOURCES
         Delegates/DbTableDelegate.cpp               Delegates/DbTableDelegate.h
                                                     Models/ResetableModel.h
         gRpcClient/gRpcDatabase.cpp                 gRpcClient/gRpcDatabase.h
+        gRpcClient/gRpcTable.cpp                    gRpcClient/gRpcTable.h
         gRpcClient/gRpcClientsImpl/gRpcGetDatabaseNameClient.cpp gRpcClient/gRpcClientsImpl/gRpcGetDatabaseNameClient.h
 )
 

@@ -4,6 +4,7 @@
 #include <grpcpp/grpcpp.h>
 
 // gRpc Clients
+#include "gRpcTable.h"
 #include "gRpcGetDatabaseNameClient.h"
 
 // STL
@@ -18,6 +19,7 @@
 struct db_grpc_client::Database::Cache
 {
     std::wstring dbName;
+    std::unique_ptr<core::VirtualTable> lastTable;
 };
 
 db_grpc_client::Database::Database(const std::string& ip, uint16_t port)
@@ -34,7 +36,7 @@ const std::wstring& db_grpc_client::Database::name() const
     return fCache->dbName;
 }
 
-/// @todo implement!
+/// cannot change name remote
 bool db_grpc_client::Database::changeName(std::wstring name)
 {
     return false;
@@ -55,13 +57,17 @@ auto db_grpc_client::Database::lastSaveInfo() const -> const core::save_load::In
 /// @todo implement!
 void db_grpc_client::Database::deleteDatabase() {}
 
-/// @todo implement!
 core::VirtualTable& db_grpc_client::Database::table(core::TableId id)
-{}
+{
+    fCache->lastTable = std::make_unique<db_grpc_client::Table>(id);
+    return *fCache->lastTable;
+}
 
-/// @todo implement!
 const core::VirtualTable& db_grpc_client::Database::table(core::TableId id) const
-{}
+{
+    fCache->lastTable = std::make_unique<db_grpc_client::Table>(id);
+    return *fCache->lastTable;
+}
 
 /// @todo implement!
 size_t db_grpc_client::Database::tableCount() const
