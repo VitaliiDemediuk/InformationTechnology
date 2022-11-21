@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+import "empty.proto";
+import "database_name.proto";
+
+service DatabaseNameGetter {
+  rpc get (Empty) returns (DatabaseName) {}
+}

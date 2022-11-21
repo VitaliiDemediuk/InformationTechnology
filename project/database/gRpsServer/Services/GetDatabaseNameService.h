@@ -1,7 +1,7 @@
 #ifndef GETDATABASENAMESERVICE_H
 #define GETDATABASENAMESERVICE_H
 
-#include <database_name.grpc.pb.h>
+#include <database_getname_service.grpc.pb.h>
 
 namespace core {
     class VirtualDatabase;
@@ -17,7 +17,7 @@ public:
 
     grpc::Status get(grpc::ServerContext* context,
                      const Empty* request,
-                     DatabaseNameReply* response) final;
+                     DatabaseName* response) final;
 
 private:
     core::VirtualDatabase& fDb;

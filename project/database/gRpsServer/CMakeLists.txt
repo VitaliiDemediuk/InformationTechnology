@@ -18,9 +18,10 @@ include(../cmake/proto_grpc_generator.cmake)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS ${Protobuf_INCLUDE_DIR}/database_name.proto
+PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
+                                            ${Protobuf_INCLUDE_DIR}/database_name.proto
                                             ${Protobuf_INCLUDE_DIR}/empty.proto)
-PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS ${Protobuf_INCLUDE_DIR}/database_name.proto)
+PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS ${Protobuf_INCLUDE_DIR}/database_getname_service.proto)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../core core)
 

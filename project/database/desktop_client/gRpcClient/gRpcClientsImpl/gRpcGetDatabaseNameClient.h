@@ -1,7 +1,7 @@
 #ifndef GRPCGETDATABASENAMECLIENT_H
 #define GRPCGETDATABASENAMECLIENT_H
 
-#include "database_name.grpc.pb.h"
+#include "database_getname_service.grpc.pb.h"
 
 namespace db_grpc_client
 {

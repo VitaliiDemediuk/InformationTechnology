@@ -12,7 +12,7 @@ db_grpc_client::DatabaseNameGetter::DatabaseNameGetter(std::shared_ptr<::grpc::C
 std::wstring db_grpc_client::DatabaseNameGetter::getName() const
 {
     ::Empty request;
-    ::DatabaseNameReply reply;
+    ::DatabaseName reply;
     grpc::ClientContext context;
 
     const auto status = fStub->get(&context, request, &reply);

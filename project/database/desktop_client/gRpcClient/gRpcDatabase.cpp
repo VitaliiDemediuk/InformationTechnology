@@ -25,7 +25,6 @@ db_grpc_client::Database::Database(const std::string& ip, uint16_t port)
 
 db_grpc_client::Database::Database::~Database() = default;
 
-/// @todo implement!
 const std::wstring& db_grpc_client::Database::name() const
 {
     db_grpc_client::DatabaseNameGetter getter(
