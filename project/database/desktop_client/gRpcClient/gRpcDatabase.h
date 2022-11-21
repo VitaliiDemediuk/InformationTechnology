@@ -17,6 +17,7 @@ namespace db_grpc_client
 
 class Database: public core::VirtualDatabase
 {
+    struct Cache;
 public:
 
     explicit Database(const std::string& ip, uint16_t port);
@@ -45,8 +46,9 @@ public:
 
 private:
 
-    const std::string target;
+    const std::string fTarget;
     std::unique_ptr<core::AbstractTableFactory> fTableFactory;
+    std::unique_ptr<Database::Cache> fCache;
 };
 
 } // db_grpc_client

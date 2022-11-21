@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "empty.proto";
+
+service DatabaseNameGetter {
+  rpc get (Empty) returns (DatabaseNameReply) {}
+}
+
+message DatabaseNameReply {
+  string name = 1;
+}

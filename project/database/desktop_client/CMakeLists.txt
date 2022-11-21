@@ -25,8 +25,9 @@ include(../cmake/proto_grpc_generator.cmake)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS ${Protobuf_INCLUDE_DIR}/create_new_database.proto)
-PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS ${Protobuf_INCLUDE_DIR}/create_new_database.proto)
+PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS ${Protobuf_INCLUDE_DIR}/database_name.proto
+                                            ${Protobuf_INCLUDE_DIR}/empty.proto)
+PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS ${Protobuf_INCLUDE_DIR}/database_name.proto)
 
 set(PROJECT_SOURCES
         ${PROTO_SRCS} ${PROTO_HDRS}
@@ -46,6 +47,7 @@ set(PROJECT_SOURCES
         Delegates/DbTableDelegate.cpp               Delegates/DbTableDelegate.h
                                                     Models/ResetableModel.h
         gRpcClient/gRpcDatabase.cpp                 gRpcClient/gRpcDatabase.h
+        gRpcClient/gRpcClientsImpl/gRpcGetDatabaseNameClient.cpp gRpcClient/gRpcClientsImpl/gRpcGetDatabaseNameClient.h
 )
 
 qt_add_executable(DatabaseDesktopClient

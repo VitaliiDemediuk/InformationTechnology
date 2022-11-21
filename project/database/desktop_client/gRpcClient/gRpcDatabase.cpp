@@ -1,5 +1,11 @@
 #include "gRpcDatabase.h"
 
+// gRpc
+#include <grpcpp/grpcpp.h>
+
+// gRpc Clients
+#include "gRpcGetDatabaseNameClient.h""
+
 // STL
 #include <atomic>
 
@@ -9,22 +15,30 @@
 // boost
 #include <boost/throw_exception.hpp>
 
+struct db_grpc_client::Database::Cache
+{
+    std::wstring dbName;
+};
+
 db_grpc_client::Database::Database(const std::string& ip, uint16_t port)
-    : target{ip + ":" + std::to_string(port)}, fTableFactory{} {}
+    : fTarget{ip + ":" + std::to_string(port)}, fTableFactory{}, fCache{new db_grpc_client::Database::Cache()} {}
 
 db_grpc_client::Database::Database::~Database() = default;
 
 /// @todo implement!
 const std::wstring& db_grpc_client::Database::name() const
 {
-    static const std::wstring empty;
-    return empty;
+    db_grpc_client::DatabaseNameGetter getter(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    fCache->dbName = getter.getName();
+
+    return fCache->dbName;
 }
 
 /// @todo implement!
 bool db_grpc_client::Database::changeName(std::wstring name)
 {
-    return true;
+    return false;
 }
 
 /// @todo implement!

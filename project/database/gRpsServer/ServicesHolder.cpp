@@ -7,7 +7,7 @@
 #include <grpcpp/server_builder.h>
 
 // Services
-#include "Services/DatabaseCreatorService.h"
+#include "Services/GetDatabaseNameService.h"
 
 struct db_grpc_server::ServicesHolder::Services
 {
@@ -17,7 +17,7 @@ struct db_grpc_server::ServicesHolder::Services
 db_grpc_server::ServicesHolder::ServicesHolder()
     : services(new ServicesHolder::Services())
 {
-    services->list.emplace_back(std::make_unique<service::DatabaseCreator>());
+    services->list.emplace_back(std::make_unique<service::GetDatabaseName>());
 }
 
 db_grpc_server::ServicesHolder::~ServicesHolder() = default;
