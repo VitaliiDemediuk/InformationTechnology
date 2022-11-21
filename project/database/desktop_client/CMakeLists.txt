@@ -13,12 +13,24 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+set(Protobuf_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../proto)
+
 set(CMAKE_PREFIX_PATH "/home/vitalii/Qt/6.3.0/gcc_64")
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
+include(../cmake/grpc_common.cmake)
+include(../cmake/proto_grpc_generator.cmake)
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS ${Protobuf_INCLUDE_DIR}/create_new_database.proto)
+PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS ${Protobuf_INCLUDE_DIR}/create_new_database.proto)
+
 set(PROJECT_SOURCES
+        ${PROTO_SRCS} ${PROTO_HDRS}
+        ${GRPC_SRCS}  ${GRPC_HDRS}
         main.cpp
         MainWindow.cpp                              MainWindow.h                           MainWindow.ui
         DesktopDatabaseClient.cpp                   DesktopDatabaseClient.h
@@ -32,6 +44,7 @@ set(PROJECT_SOURCES
         Models/DbTableModel.cpp                     Models/DbTableModel.h
         Delegates/DbTableDelegate.cpp               Delegates/DbTableDelegate.h
                                                     Models/ResetableModel.h
+        gRpcClient/gRpcDatabase.cpp                 gRpcClient/gRpcDatabase.h
 )
 
 qt_add_executable(DatabaseDesktopClient
@@ -39,13 +52,18 @@ qt_add_executable(DatabaseDesktopClient
     ${PROJECT_SOURCES}
 )
 
-target_link_libraries(DatabaseDesktopClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets core)
+target_link_libraries(DatabaseDesktopClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets core
+                                                    ${_REFLECTION}
+                                                    ${_GRPC_GRPCPP}
+                                                    ${_PROTOBUF_LIBPROTOBUF})
 
 target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../core/include)
 
 target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Dialogs)
 target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Models)
 target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Delegates)
+target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/gRpcClient)
+target_include_directories(DatabaseDesktopClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/gRpcClient/gRpcClientsImpl)
 
 set_target_properties(DatabaseDesktopClient PROPERTIES
     CXX_STANDARD 20
