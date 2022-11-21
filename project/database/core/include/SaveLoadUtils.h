@@ -26,10 +26,13 @@ struct SQLiteInfo
     std::filesystem::path filePath;
 };
 
+struct Remote {};
+
 using Information = std::variant<std::monostate,
                                  CustomFileInfo,
                                  MongoDbInfo,
-                                 SQLiteInfo>;
+                                 SQLiteInfo,
+                                 Remote>;
 
 } // core::save_load
 

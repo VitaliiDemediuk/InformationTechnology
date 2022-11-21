@@ -32,7 +32,7 @@ public:
 
     virtual VirtualTable& createTable(std::wstring name) = 0;
     virtual void deleteTable(TableId id) = 0;
-    virtual VirtualTable& createCartesianProduct(TableId firstId, TableId secondId) = 0;
+    virtual void createCartesianProduct(TableId firstId, TableId secondId) = 0;
 
     virtual ~VirtualDatabase() = default;
 };

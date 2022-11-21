@@ -105,7 +105,7 @@ void core::Database::deleteTable(TableId id)
     fTables.erase(it);
 }
 
-core::VirtualTable& core::Database::createCartesianProduct(TableId firstId, TableId secondId)
+void core::Database::createCartesianProduct(TableId firstId, TableId secondId)
 {
     const auto& firstTable = table(firstId);
     const auto& secondTable = table(secondId);
@@ -138,8 +138,6 @@ core::VirtualTable& core::Database::createCartesianProduct(TableId firstId, Tabl
             }
         });
     });
-
-    return newTable;
 }
 
 bool core::Database::validateTableName(const std::wstring& name) const

@@ -134,10 +134,17 @@
      <addaction name="acOpenFromSQLite"/>
      <addaction name="acLoadFromMongoDb"/>
     </widget>
+    <widget class="QMenu" name="menuConnect">
+     <property name="title">
+      <string>Connect</string>
+     </property>
+     <addaction name="acConnectTogRpcServer"/>
+    </widget>
     <addaction name="acNewDatabase"/>
     <addaction name="menuOpen_database"/>
     <addaction name="acSave"/>
     <addaction name="acSaveAs"/>
+    <addaction name="menuConnect"/>
     <addaction name="separator"/>
     <addaction name="acCartesianProduct"/>
    </widget>
@@ -180,6 +187,11 @@
   <action name="acCartesianProduct">
    <property name="text">
     <string>Cartesian product</string>
+   </property>
+  </action>
+  <action name="acConnectTogRpcServer">
+   <property name="text">
+    <string>gRpc</string>
    </property>
   </action>
  </widget>

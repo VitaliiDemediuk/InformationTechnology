@@ -42,6 +42,7 @@ private slots:
     void openFromSQLiteFile();
     void loadFromMongoDb();
     void createCartesianProduct();
+    void connectTogRpcServer();
 
 private:
     enum class Continue : bool { NO = false, YES = true};

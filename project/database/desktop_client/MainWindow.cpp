@@ -8,6 +8,9 @@
 #include <MongoDbSaveLoadStrategy.h>
 #include <SQLiteSaveLoadStrategy.h>
 
+// gRpc
+#include "gRpcDatabase.h"
+
 // Dialogs
 #include "NewDbDialog.h"
 #include "TableNameDialog.h"
@@ -15,6 +18,7 @@
 #include "SaveDatabaseDialog.h"
 #include "LoadFromMongoDbDialog.h"
 #include "CreateCartesianProductDialog.h"
+#include "ConnectTogRpcServerDialog.h"
 
 // Models
 #include "TableListModel.h"
@@ -118,6 +122,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->acCartesianProduct, &QAction::triggered, this, &MainWindow::createCartesianProduct);
 
+    connect(ui->acConnectTogRpcServer, &QAction::triggered, this, &MainWindow::connectTogRpcServer);
+
     // Set models
     ui->tableListView->setModel(&d->tableListModel);
     ui->tableView->setModel(&d->dbTableModel);
@@ -150,6 +156,7 @@ void MainWindow::createNewDatabase()
 
     desktop::NewDbDialog dialog(d->dbClient, this);
     if (std::wstring dbName; dialog.exec(dbName)) {
+        core::Database ddb(std::move(dbName), std::make_unique<core::CustomTableFactory>());
         auto db = std::make_unique<core::Database>(std::move(dbName), std::make_unique<core::CustomTableFactory>());
         d->dbClient.setNewDatabase(std::move(db));
         refresh();
@@ -384,7 +391,7 @@ void MainWindow::loadFromMongoDb()
         return;
     }
 
-    desktop::LoadFromMongoDbDialog dialog(d->dbClient);
+    desktop::LoadFromMongoDbDialog dialog(d->dbClient, this);
     core::save_load::MongoDbInfo saveInfo;
 
     if (dialog.exec(saveInfo)) {
@@ -408,6 +415,23 @@ void MainWindow::createCartesianProduct()
     if (dialog.exec(tableList, firstTableId, secondTableId)) {
         auto cmd = std::make_unique<core::command::CreateCartesianProduct>(firstTableId, secondTableId);
         d->dbClient.exec(std::move(cmd));
+        refresh();
+    }
+}
+
+void MainWindow::connectTogRpcServer()
+{
+    if (proposeSavingsIfNecessary() == Continue::NO) {
+        return;
+    }
+
+    desktop::ConnectTogRpcServerDialog dialog(this);
+
+    std::string ip;
+    uint16_t port{};
+    if (dialog.exec(ip, port)) {
+        auto database = std::make_unique<db_grpc_client::Database>(std::move(ip), port);
+        d->dbClient.setNewDatabase(std::move(database));
         refresh();
     }
 }
