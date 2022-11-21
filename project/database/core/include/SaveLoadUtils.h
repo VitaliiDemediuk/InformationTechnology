@@ -31,6 +31,6 @@ using Information = std::variant<std::monostate,
                                  MongoDbInfo,
                                  SQLiteInfo>;
 
-} // core
+} // core::save_load
 
 #endif //SAVELOADUTILS_H
