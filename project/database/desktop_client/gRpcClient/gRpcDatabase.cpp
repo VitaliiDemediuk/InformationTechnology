@@ -4,7 +4,7 @@
 #include <grpcpp/grpcpp.h>
 
 // gRpc Clients
-#include "gRpcGetDatabaseNameClient.h""
+#include "gRpcGetDatabaseNameClient.h"
 
 // STL
 #include <atomic>
@@ -75,7 +75,7 @@ void db_grpc_client::Database::forAllTable(const std::function<void(const core::
 {}
 
 /// @todo implement!
-core::VirtualTable& db_grpc_client::Database::createTable(std::wstring name)
+core::TableId db_grpc_client::Database::createTable(std::wstring name)
 {}
 
 /// @todo implement!

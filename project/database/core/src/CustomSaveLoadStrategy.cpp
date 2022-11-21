@@ -239,7 +239,8 @@ void core::save_load::CustomFileStrategy::readTable(std::ifstream& stream, core:
 {
     auto tableName = readString<wchar_t>(stream);
     (void)readTrivial<core::TableId>(stream);
-    auto& table = db.createTable(tableName);
+    const auto tableId = db.createTable(tableName);
+    auto& table = db.table(tableId);
     if (auto* customTable = dynamic_cast<core::CustomTable*>(&table)) {
         readColumns(stream, *customTable);
         readRows(stream, *customTable);

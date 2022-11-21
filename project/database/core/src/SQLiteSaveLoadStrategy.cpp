@@ -365,7 +365,8 @@ void core::save_load::SQLiteStrategy::getTablesFromSQLiteDb(SQLite::Database& sq
 {
     const auto tableNames = getTableNames(sqlDb);
     for (const auto& tableName : tableNames) {
-        auto& table = db.createTable(tableName);
+        const auto tableId = db.createTable(tableName);
+        auto& table = db.table(tableId);
         getTableFromSQLiteDb(sqlDb, table);
     }
 }

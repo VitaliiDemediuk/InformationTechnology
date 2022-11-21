@@ -155,7 +155,8 @@ auto readTableInfo(mongocxx::database& mongoDb, core::Database& db) -> CustomTab
 
         for (auto doc : cursor) {
             auto tableNameUtf8 = doc.find("table_name")->get_string().value.to_string();
-            auto& table = db.createTable(core::utils::utf8ToWstring(tableNameUtf8));
+            const auto tableId = db.createTable(core::utils::utf8ToWstring(tableNameUtf8));
+            auto& table = db.table(tableId);
             tableRefs.push_back(dynamic_cast<core::CustomTable&>(table));
 
             auto columnsInfo = doc.find("columns")->get_array().value;

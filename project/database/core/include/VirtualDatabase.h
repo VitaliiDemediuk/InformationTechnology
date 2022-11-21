@@ -30,7 +30,7 @@ public:
     virtual size_t tableCount() const = 0;
     virtual void forAllTable(const std::function<void(const VirtualTable&)>& worker) const = 0;
 
-    virtual VirtualTable& createTable(std::wstring name) = 0;
+    virtual core::TableId createTable(std::wstring name) = 0;
     virtual void deleteTable(TableId id) = 0;
     virtual void createCartesianProduct(TableId firstId, TableId secondId) = 0;
 

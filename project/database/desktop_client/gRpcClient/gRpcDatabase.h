@@ -36,7 +36,7 @@ public:
     size_t tableCount() const final;
     void forAllTable(const std::function<void(const core::VirtualTable&)>& worker) const final;
 
-    core::VirtualTable& createTable(std::wstring name) final;
+    core::TableId createTable(std::wstring name) final;
     void deleteTable(core::TableId id) final;
     void createCartesianProduct(core::TableId firstId, core::TableId secondId) final;
 
@@ -48,7 +48,7 @@ private:
 
     const std::string fTarget;
     std::unique_ptr<core::AbstractTableFactory> fTableFactory;
-    std::unique_ptr<Database::Cache> fCache;
+    mutable std::unique_ptr<Database::Cache> fCache;
 };
 
 } // db_grpc_client

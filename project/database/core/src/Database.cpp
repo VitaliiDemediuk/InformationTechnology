@@ -89,11 +89,12 @@ void core::Database::forAllTable(const std::function<void(const VirtualTable&)>&
     }
 }
 
-core::VirtualTable& core::Database::createTable(std::wstring name)
+core::TableId core::Database::createTable(std::wstring name)
 {
     static std::atomic<core::TableId> lastTableId{1};
     const auto newId = lastTableId++;
-    return *(fTables[newId] = fTableFactory->createTable(newId, std::move(name)));
+    fTables[newId] = fTableFactory->createTable(newId, std::move(name));
+    return newId;
 }
 
 void core::Database::deleteTable(TableId id)
@@ -110,7 +111,8 @@ void core::Database::createCartesianProduct(TableId firstId, TableId secondId)
     const auto& firstTable = table(firstId);
     const auto& secondTable = table(secondId);
 
-    auto& newTable = createTable(firstTable.name() + L" * " + secondTable.name());
+    const auto newTableId = createTable(firstTable.name() + L" * " + secondTable.name());
+    auto& newTable = table(newTableId);
 
     for (size_t i = 1; i < secondTable.columnCount(); ++i) {
         auto columnInfo = secondTable.column(i).clone();
