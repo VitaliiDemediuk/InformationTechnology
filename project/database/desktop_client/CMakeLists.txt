@@ -40,6 +40,7 @@ set(PROJECT_SOURCES
         Dialogs/SaveDatabaseDialog.cpp              Dialogs/SaveDatabaseDialog.h           Dialogs/SaveDatabaseDialog.ui
         Dialogs/LoadFromMongoDbDialog.cpp           Dialogs/LoadFromMongoDbDialog.h        Dialogs/LoadFromMongoDbDialog.ui
         Dialogs/CreateCartesianProductDialog.cpp    Dialogs/CreateCartesianProductDialog.h Dialogs/CreateCartesianProductDialog.ui
+        Dialogs/ConnectTogRpcServerDialog.cpp       Dialogs/ConnectTogRpcServerDialog.h    Dialogs/ConnectTogRpcServerDialog.ui
         Models/TableListModel.cpp                   Models/TableListModel.h
         Models/DbTableModel.cpp                     Models/DbTableModel.h
         Delegates/DbTableDelegate.cpp               Delegates/DbTableDelegate.h
