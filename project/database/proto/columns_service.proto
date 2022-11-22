@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+import "empty.proto";
+import "table_id.proto";
+import "column_id.proto";
+
+service ColumnsService {
+    rpc get(ColumnId) returns (ColumnInfo) {}
+    rpc create(CreateColumnRequest) returns (Empty) {}
+    rpc edit(ColumnEditRequest) returns (Empty) {}
+    rpc deleteColumn(ColumnId) returns (Empty) {}
+}
+
+enum ColumnDataType {
+    INTEGER          = 0;
+    REAL             = 1;
+    CHAR             = 2;
+    STRING           = 3;
+    TEXT_FILE        = 4;
+    INTERVAL_INTEGER = 5;
+}
+
+message CreateColumnRequest {
+    TableId tableId = 1;
+    ColumnInfo info = 2;
+}
+
+message DefaultColumnInfo {
+    ColumnDataType type = 1;
+    string name = 2;
+}
+
+message IntervalIntColumnInfo {
+    ColumnDataType type = 1;
+    string name = 2;
+    int64 lowerLimit = 3;
+    int64 upperLimit = 4;
+}
+
+message ColumnInfo {
+    oneof info {
+        DefaultColumnInfo defaultInfo = 1;
+        IntervalIntColumnInfo intIntervalInfo = 2;
+    }
+}
+
+message ColumnEditRequest
+{
+    ColumnId columnid = 1;
+    ColumnInfo info = 2;
+}

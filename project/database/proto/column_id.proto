@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+import "table_id.proto";
+
+message ColumnId {
+    TableId tableId = 1;
+    uint64 idx = 2;
+}

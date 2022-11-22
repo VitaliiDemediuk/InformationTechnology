@@ -14,6 +14,7 @@
 #include "Services/GetTableNameService.h"
 #include "Services/DeleteTableService.h"
 #include "Services/CreateCartesianProductService.h"
+#include "Services/ColumnsService.h"
 
 
 struct db_grpc_server::ServicesHolder::Services
@@ -31,6 +32,7 @@ db_grpc_server::ServicesHolder::ServicesHolder(core::VirtualDatabase& db)
     fServices->list.emplace_back(std::make_unique<service::GetTableName>(db));
     fServices->list.emplace_back(std::make_unique<service::DeleteTable>(db));
     fServices->list.emplace_back(std::make_unique<service::CreateCartesianProduct>(db));
+    fServices->list.emplace_back(std::make_unique<service::Columns>(db));
 }
 
 db_grpc_server::ServicesHolder::~ServicesHolder() = default;

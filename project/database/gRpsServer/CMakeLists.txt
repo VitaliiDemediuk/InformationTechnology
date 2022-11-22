@@ -6,8 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_CXX_FLAGS "-lboost_program_options")
-
 FIND_PACKAGE(Boost COMPONENTS program_options REQUIRED)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
@@ -29,7 +27,9 @@ PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS     ${Protobuf_INCLUDE_DIR}/database
                                                 ${Protobuf_INCLUDE_DIR}/get_all_tables_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_table_name_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/delete_table_service.proto
-                                                ${Protobuf_INCLUDE_DIR}/create_cartesian_product_service.proto)
+                                                ${Protobuf_INCLUDE_DIR}/create_cartesian_product_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/column_id.proto
+                                                ${Protobuf_INCLUDE_DIR}/columns_service.proto)
 
 PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/table_count_service.proto
@@ -37,7 +37,8 @@ PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database
                                                 ${Protobuf_INCLUDE_DIR}/get_all_tables_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_table_name_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/delete_table_service.proto
-                                                ${Protobuf_INCLUDE_DIR}/create_cartesian_product_service.proto)
+                                                ${Protobuf_INCLUDE_DIR}/create_cartesian_product_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/columns_service.proto)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../core core)
 
@@ -49,6 +50,7 @@ add_executable(gRpsDatabaseServer
                Services/GetTableNameService.cpp           Services/GetTableNameService.h
                Services/DeleteTableService.cpp            Services/DeleteTableService.h
                Services/CreateCartesianProductService.cpp Services/CreateCartesianProductService.h
+               Services/ColumnsService.cpp                Services/ColumnsService.h
                ServicesHolder.cpp ServicesHolder.h
                ${PROTO_SRCS} ${PROTO_HDRS}
                ${GRPC_SRCS}  ${GRPC_HDRS}

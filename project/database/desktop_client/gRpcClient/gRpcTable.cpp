@@ -5,10 +5,12 @@
 
 // gRpc Clients
 #include "gRpcGetTableNameClient.h"
+#include "gRpcColumnsClient.h"
 
 struct db_grpc_client::Table::Cache
 {
     std::wstring tableName;
+    std::unique_ptr<core::VirtualColumnInfo> lastColumn;
 };
 
 db_grpc_client::Table::Table(core::TableId id, std::string target)
@@ -34,9 +36,13 @@ const std::wstring& db_grpc_client::Table::name() const
 void db_grpc_client::Table::changeName(std::wstring name)
 {}
 
-/// @todo implement!
 const core::VirtualColumnInfo& db_grpc_client::Table::column(size_t idx) const
-{}
+{
+    db_grpc_client::Columns columnClient(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    fCache->lastColumn = columnClient.get(id(), idx);
+    return *fCache->lastColumn;
+}
 
 /// @todo implement!
 size_t db_grpc_client::Table::columnCount() const
@@ -44,17 +50,28 @@ size_t db_grpc_client::Table::columnCount() const
     return 0;
 }
 
-/// @todo implement!
 void db_grpc_client::Table::createColumn(std::unique_ptr<core::VirtualColumnInfo> info)
-{}
+{
+    db_grpc_client::Columns columnClient(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    columnClient.create(id(), *info);
+}
 
-/// @todo implement!
 void db_grpc_client::Table::deleteColumn(size_t idx)
-{}
+{
+    db_grpc_client::Columns columnClient(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    columnClient.deleteColumn(id(), idx);
+}
 
-/// @todo implement!
 void db_grpc_client::Table::editColumnName(size_t idx, std::wstring name)
-{}
+{
+    auto columnInfo = column(idx).clone();
+    columnInfo->changeName(std::move(name));
+    db_grpc_client::Columns columnClient(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    columnClient.edit(id(), idx, *columnInfo);
+}
 
 /// @todo implement!
 const core::Row& db_grpc_client::Table::row(size_t id) const
