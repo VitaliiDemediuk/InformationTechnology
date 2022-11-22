@@ -7,13 +7,13 @@
 #include <grpcpp/grpcpp.h>
 
 db_grpc_client::TableCountGetter::TableCountGetter(std::shared_ptr<::grpc::Channel> channel)
-    : fStub(::TableCountGetter::NewStub(channel)) {}
+    : fStub(::TablesCountGetter::NewStub(channel)) {}
 
 size_t db_grpc_client::TableCountGetter::getCount() const
 {
     ::Empty request;
 
-    ::TableCount reply;
+    ::TablesCount reply;
     grpc::ClientContext context;
 
     const auto status = fStub->get(&context, request, &reply);

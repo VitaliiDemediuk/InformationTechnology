@@ -1,7 +1,7 @@
 #ifndef GETTABLECOUNTSERVICE_H
 #define GETTABLECOUNTSERVICE_H
 
-#include <table_count_service.grpc.pb.h>
+#include <get_tables_count_service.grpc.pb.h>
 
 namespace core {
     class VirtualDatabase;
@@ -10,14 +10,14 @@ namespace core {
 namespace db_grpc_server::service
 {
 
-class GetTableCount final : public ::TableCountGetter::Service
+class GetTableCount final : public ::TablesCountGetter::Service
 {
 public:
     explicit GetTableCount(core::VirtualDatabase& db);
 
     grpc::Status get(grpc::ServerContext* context,
                      const Empty* request,
-                     TableCount* response) final;
+                     TablesCount* response) final;
 
 private:
     core::VirtualDatabase& fDb;

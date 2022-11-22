@@ -22,7 +22,7 @@ PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS     ${Protobuf_INCLUDE_DIR}/database
                                                 ${Protobuf_INCLUDE_DIR}/all_tables_id.proto
                                                 ${Protobuf_INCLUDE_DIR}/empty.proto
                                                 ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
-                                                ${Protobuf_INCLUDE_DIR}/table_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_tables_count_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/create_table_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_all_tables_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_table_name_service.proto
@@ -32,7 +32,7 @@ PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS     ${Protobuf_INCLUDE_DIR}/database
                                                 ${Protobuf_INCLUDE_DIR}/columns_service.proto)
 
 PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
-                                                ${Protobuf_INCLUDE_DIR}/table_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_tables_count_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/create_table_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_all_tables_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_table_name_service.proto

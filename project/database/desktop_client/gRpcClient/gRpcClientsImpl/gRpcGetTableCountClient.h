@@ -2,7 +2,7 @@
 #define GRPCGETTABLECOUNTCLIENT_H
 
 // gRpc
-#include "table_count_service.grpc.pb.h"
+#include "get_tables_count_service.grpc.pb.h"
 
 namespace db_grpc_client
 {
@@ -15,7 +15,7 @@ public:
     size_t getCount() const;
 
 private:
-    std::unique_ptr<::TableCountGetter::Stub> fStub;
+    std::unique_ptr<::TablesCountGetter::Stub> fStub;
 };
 
 };
