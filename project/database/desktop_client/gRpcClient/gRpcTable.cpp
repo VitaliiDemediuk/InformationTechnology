@@ -44,7 +44,9 @@ const core::Row& db_grpc_client::Table::row(size_t id) const
 
 /// @todo implement!
 size_t db_grpc_client::Table::rowCount() const
-{}
+{
+    return 0;
+}
 
 /// @todo implement!
 size_t db_grpc_client::Table::createRow()

@@ -21,7 +21,7 @@ core::TableId db_grpc_client::TableCreator::createTable(const std::wstring& tabl
     const auto status = fStub->create(&context, request, &reply);
 
     if (!status.ok()) {
-        throw std::runtime_error("db_grpc_client::TableCountGetter. Status is not ok!");
+        throw std::runtime_error("db_grpc_client::TableCreator. Status is not ok!");
     }
 
     return reply.id();

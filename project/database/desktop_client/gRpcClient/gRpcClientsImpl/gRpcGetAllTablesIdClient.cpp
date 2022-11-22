@@ -18,7 +18,7 @@ std::vector<core::TableId> db_grpc_client::AllTablesGetter::get() const
     const auto status = fStub->get(&context, request, &reply);
 
     if (!status.ok()) {
-        throw std::runtime_error("db_grpc_client::DatabaseNameGetter. Status is not ok!");
+        throw std::runtime_error("db_grpc_client::AllTablesGetter. Status is not ok!");
     }
 
     std::vector<core::TableId> res;
