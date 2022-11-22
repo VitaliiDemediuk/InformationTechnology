@@ -8,6 +8,7 @@
 #include "gRpcGetDatabaseNameClient.h"
 #include "gRpcGetTableCountClient.h"
 #include "gRpcCreateTableClient.h"
+#include "gRpcGetAllTablesIdClient.h"
 
 // STL
 #include <atomic>
@@ -78,9 +79,17 @@ size_t db_grpc_client::Database::tableCount() const
     return getter.getCount();
 }
 
-/// @todo implement!
 void db_grpc_client::Database::forAllTable(const std::function<void(const core::VirtualTable&)>& worker) const
-{}
+{
+    db_grpc_client::AllTablesGetter getter(
+        grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    const auto tablesId = getter.get();
+
+    for (const auto id : tablesId) {
+        db_grpc_client::Table table(id);
+        worker(table);
+    }
+}
 
 core::TableId db_grpc_client::Database::createTable(std::wstring name)
 {

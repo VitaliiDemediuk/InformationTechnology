@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+import "table_id.proto";
+
+message AllTablesId {
+    repeated TableId tablesId = 1;
+}

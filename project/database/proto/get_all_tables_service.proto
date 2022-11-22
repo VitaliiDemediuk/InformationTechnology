@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+import "empty.proto";
+import "all_tables_id.proto";
+
+service AllTablesIdGetter {
+    rpc get (Empty) returns (AllTablesId) {}
+}
