@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+import "table_id.proto";
+import "table_name.proto";
+
+service TableNameGetter {
+    rpc get (TableId) returns (TableName) {}
+}

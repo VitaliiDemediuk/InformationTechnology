@@ -9,8 +9,10 @@ namespace db_grpc_client
 
 class Table : public core::VirtualTable
 {
+    struct Cache;
 public:
-    explicit Table(core::TableId id);
+    explicit Table(core::TableId id, const std::string target);
+    ~Table(); // for PIPL
 
     core::TableId id() const final;
     const std::wstring& name() const final;
@@ -37,6 +39,8 @@ public:
 
 private:
     const core::TableId fId;
+    const std::string fTarget;
+    mutable std::unique_ptr<Table::Cache> fCache;
 };
 
 } // db_grpc_client

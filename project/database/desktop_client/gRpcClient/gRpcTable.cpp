@@ -1,16 +1,34 @@
 #include "gRpcTable.h"
 
-db_grpc_client::Table::Table(core::TableId id)
-    : fId{id} {}
+// gRpc
+#include <grpcpp/grpcpp.h>
+
+// gRpc Clients
+#include "gRpcGetTableNameClient.h"
+
+struct db_grpc_client::Table::Cache
+{
+    std::wstring tableName;
+};
+
+db_grpc_client::Table::Table(core::TableId id, std::string target)
+    : fId{id}, fTarget{std::move(target)}, fCache(new Cache) {}
+
+db_grpc_client::Table::~Table() = default;
 
 core::TableId db_grpc_client::Table::id() const
 {
     return fId;
 }
 
-/// @todo implement!
 const std::wstring& db_grpc_client::Table::name() const
-{}
+{
+    db_grpc_client::TableNameGetter getter(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    fCache->tableName = getter.getName(id());
+
+    return fCache->tableName;
+}
 
 /// @todo implement!
 void db_grpc_client::Table::changeName(std::wstring name)

@@ -9,6 +9,8 @@
 #include "gRpcGetTableCountClient.h"
 #include "gRpcCreateTableClient.h"
 #include "gRpcGetAllTablesIdClient.h"
+#include "gRpcDeleteTableClient.h"
+#include "gRpcCreateCartesianProductClient.h"
 
 // STL
 #include <atomic>
@@ -62,13 +64,13 @@ void db_grpc_client::Database::deleteDatabase() {}
 
 core::VirtualTable& db_grpc_client::Database::table(core::TableId id)
 {
-    fCache->lastTable = std::make_unique<db_grpc_client::Table>(id);
+    fCache->lastTable = std::make_unique<db_grpc_client::Table>(id, fTarget);
     return *fCache->lastTable;
 }
 
 const core::VirtualTable& db_grpc_client::Database::table(core::TableId id) const
 {
-    fCache->lastTable = std::make_unique<db_grpc_client::Table>(id);
+    fCache->lastTable = std::make_unique<db_grpc_client::Table>(id, fTarget);
     return *fCache->lastTable;
 }
 
@@ -86,7 +88,7 @@ void db_grpc_client::Database::forAllTable(const std::function<void(const core::
     const auto tablesId = getter.get();
 
     for (const auto id : tablesId) {
-        db_grpc_client::Table table(id);
+        db_grpc_client::Table table(id, fTarget);
         worker(table);
     }
 }
@@ -98,13 +100,20 @@ core::TableId db_grpc_client::Database::createTable(std::wstring name)
     return creator.createTable(name);
 }
 
-/// @todo implement!
 void db_grpc_client::Database::deleteTable(core::TableId id)
-{}
+{
+    db_grpc_client::TableDeleter deleter(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    deleter.deleteTable(id);
+}
 
 /// @todo implement!
 void db_grpc_client::Database::createCartesianProduct(core::TableId firstId, core::TableId secondId)
-{}
+{
+    db_grpc_client::CartesianProductCreator creator(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    creator.create(firstId, secondId);
+}
 
 bool db_grpc_client::Database::validateTableName(const std::wstring& name) const
 {

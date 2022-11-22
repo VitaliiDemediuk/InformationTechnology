@@ -25,20 +25,26 @@ include(../cmake/proto_grpc_generator.cmake)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS    ${Protobuf_INCLUDE_DIR}/database_name.proto
-                                               ${Protobuf_INCLUDE_DIR}/table_id.proto
-                                               ${Protobuf_INCLUDE_DIR}/table_name.proto
-                                               ${Protobuf_INCLUDE_DIR}/all_tables_id.proto
-                                               ${Protobuf_INCLUDE_DIR}/empty.proto
-                                               ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
-                                               ${Protobuf_INCLUDE_DIR}/table_count_service.proto
-                                               ${Protobuf_INCLUDE_DIR}/create_table_service.proto
-                                               ${Protobuf_INCLUDE_DIR}/get_all_tables_service.proto)
+PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS     ${Protobuf_INCLUDE_DIR}/database_name.proto
+                                                ${Protobuf_INCLUDE_DIR}/table_id.proto
+                                                ${Protobuf_INCLUDE_DIR}/table_name.proto
+                                                ${Protobuf_INCLUDE_DIR}/all_tables_id.proto
+                                                ${Protobuf_INCLUDE_DIR}/empty.proto
+                                                ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/table_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/create_table_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_all_tables_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_table_name_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/delete_table_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/create_cartesian_product_service.proto)
 
-PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
-                                               ${Protobuf_INCLUDE_DIR}/table_count_service.proto
-                                               ${Protobuf_INCLUDE_DIR}/create_table_service.proto
-                                               ${Protobuf_INCLUDE_DIR}/get_all_tables_service.proto)
+PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/table_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/create_table_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_all_tables_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_table_name_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/delete_table_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/create_cartesian_product_service.proto)
 
 set(PROJECT_SOURCES
         ${PROTO_SRCS} ${PROTO_HDRS}
@@ -59,10 +65,13 @@ set(PROJECT_SOURCES
                                                     Models/ResetableModel.h
         gRpcClient/gRpcDatabase.cpp                 gRpcClient/gRpcDatabase.h
         gRpcClient/gRpcTable.cpp                    gRpcClient/gRpcTable.h
-        gRpcClient/gRpcClientsImpl/gRpcGetDatabaseNameClient.cpp gRpcClient/gRpcClientsImpl/gRpcGetDatabaseNameClient.h
-        gRpcClient/gRpcClientsImpl/gRpcGetTableCountClient.cpp   gRpcClient/gRpcClientsImpl/gRpcGetTableCountClient.h
-        gRpcClient/gRpcClientsImpl/gRpcCreateTableClient.cpp     gRpcClient/gRpcClientsImpl/gRpcCreateTableClient.h
-        gRpcClient/gRpcClientsImpl/gRpcGetAllTablesIdClient.cpp  gRpcClient/gRpcClientsImpl/gRpcGetAllTablesIdClient.h
+        gRpcClient/gRpcClientsImpl/gRpcGetDatabaseNameClient.cpp        gRpcClient/gRpcClientsImpl/gRpcGetDatabaseNameClient.h
+        gRpcClient/gRpcClientsImpl/gRpcGetTableCountClient.cpp          gRpcClient/gRpcClientsImpl/gRpcGetTableCountClient.h
+        gRpcClient/gRpcClientsImpl/gRpcCreateTableClient.cpp            gRpcClient/gRpcClientsImpl/gRpcCreateTableClient.h
+        gRpcClient/gRpcClientsImpl/gRpcGetAllTablesIdClient.cpp         gRpcClient/gRpcClientsImpl/gRpcGetAllTablesIdClient.h
+        gRpcClient/gRpcClientsImpl/gRpcGetTableNameClient.cpp           gRpcClient/gRpcClientsImpl/gRpcGetTableNameClient.h
+        gRpcClient/gRpcClientsImpl/gRpcDeleteTableClient.cpp            gRpcClient/gRpcClientsImpl/gRpcDeleteTableClient.h
+        gRpcClient/gRpcClientsImpl/gRpcCreateCartesianProductClient.cpp gRpcClient/gRpcClientsImpl/gRpcCreateCartesianProductClient.h
 )
 
 qt_add_executable(DatabaseDesktopClient

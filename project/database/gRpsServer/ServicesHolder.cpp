@@ -11,6 +11,10 @@
 #include "Services/GetTableCountService.h"
 #include "Services/CreateTableService.h"
 #include "Services/GetAllTablesIdService.h"
+#include "Services/GetTableNameService.h"
+#include "Services/DeleteTableService.h"
+#include "Services/CreateCartesianProductService.h"
+
 
 struct db_grpc_server::ServicesHolder::Services
 {
@@ -24,6 +28,9 @@ db_grpc_server::ServicesHolder::ServicesHolder(core::VirtualDatabase& db)
     fServices->list.emplace_back(std::make_unique<service::GetTableCount>(db));
     fServices->list.emplace_back(std::make_unique<service::TableCreator>(db));
     fServices->list.emplace_back(std::make_unique<service::AllTablesIdGetter>(db));
+    fServices->list.emplace_back(std::make_unique<service::GetTableName>(db));
+    fServices->list.emplace_back(std::make_unique<service::DeleteTable>(db));
+    fServices->list.emplace_back(std::make_unique<service::CreateCartesianProduct>(db));
 }
 
 db_grpc_server::ServicesHolder::~ServicesHolder() = default;

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+import "empty.proto";
+import "table_id.proto";
+
+service TableDeleter {
+    rpc deleteTable (TableId) returns (Empty) {}
+}
