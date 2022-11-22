@@ -6,6 +6,10 @@
 // gRpc Clients
 #include "gRpcGetTableNameClient.h"
 #include "gRpcColumnsClient.h"
+#include "gRpcGetColumnsCountClient.h"
+#include "gRpcGetRowsCountClient.h"
+#include "gRpcGetColumnsCountClient.h"
+#include "gRpcRenameTableClient.h"
 
 struct db_grpc_client::Table::Cache
 {
@@ -32,9 +36,12 @@ const std::wstring& db_grpc_client::Table::name() const
     return fCache->tableName;
 }
 
-/// @todo implement!
 void db_grpc_client::Table::changeName(std::wstring name)
-{}
+{
+    db_grpc_client::RenameTable renameTableClient(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    renameTableClient.rename(id(), name);
+}
 
 const core::VirtualColumnInfo& db_grpc_client::Table::column(size_t idx) const
 {
@@ -44,10 +51,11 @@ const core::VirtualColumnInfo& db_grpc_client::Table::column(size_t idx) const
     return *fCache->lastColumn;
 }
 
-/// @todo implement!
 size_t db_grpc_client::Table::columnCount() const
 {
-    return 0;
+    db_grpc_client::ColumnsCountGetter getter(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    return getter.getCount(id());
 }
 
 void db_grpc_client::Table::createColumn(std::unique_ptr<core::VirtualColumnInfo> info)
@@ -77,17 +85,19 @@ void db_grpc_client::Table::editColumnName(size_t idx, std::wstring name)
 const core::Row& db_grpc_client::Table::row(size_t id) const
 {}
 
-/// @todo implement!
 size_t db_grpc_client::Table::rowCount() const
 {
-    return 0;
+    db_grpc_client::RowsCountGetter getter(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    std::cout << getter.getCount(id()) << std::endl;
+    return getter.getCount(id());
 }
 
 /// @todo implement!
 size_t db_grpc_client::Table::createRow()
 {}
 
-/// @todo implement!
+/// @todo implement!GetColumnsCount
 void db_grpc_client::Table::deleteRow(size_t idx)
 {}
 

@@ -15,6 +15,9 @@
 #include "Services/DeleteTableService.h"
 #include "Services/CreateCartesianProductService.h"
 #include "Services/ColumnsService.h"
+#include "Services/GetRowsCountService.h"
+#include "Services/GetColumnsCountService.h"
+#include "Services/RenameTableService.h"
 
 
 struct db_grpc_server::ServicesHolder::Services
@@ -33,6 +36,9 @@ db_grpc_server::ServicesHolder::ServicesHolder(core::VirtualDatabase& db)
     fServices->list.emplace_back(std::make_unique<service::DeleteTable>(db));
     fServices->list.emplace_back(std::make_unique<service::CreateCartesianProduct>(db));
     fServices->list.emplace_back(std::make_unique<service::Columns>(db));
+    fServices->list.emplace_back(std::make_unique<service::GetRowsCount>(db));
+    fServices->list.emplace_back(std::make_unique<service::GetColumnsCount>(db));
+    fServices->list.emplace_back(std::make_unique<service::RenameTable>(db));
 }
 
 db_grpc_server::ServicesHolder::~ServicesHolder() = default;

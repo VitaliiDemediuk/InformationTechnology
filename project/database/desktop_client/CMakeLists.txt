@@ -38,7 +38,10 @@ PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS     ${Protobuf_INCLUDE_DIR}/database
                                                 ${Protobuf_INCLUDE_DIR}/delete_table_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/create_cartesian_product_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/column_id.proto
-                                                ${Protobuf_INCLUDE_DIR}/columns_service.proto)
+                                                ${Protobuf_INCLUDE_DIR}/columns_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_columns_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_rows_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/rename_table_service.proto)
 
 PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_tables_count_service.proto
@@ -47,7 +50,10 @@ PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database
                                                 ${Protobuf_INCLUDE_DIR}/get_table_name_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/delete_table_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/create_cartesian_product_service.proto
-                                                ${Protobuf_INCLUDE_DIR}/columns_service.proto)
+                                                ${Protobuf_INCLUDE_DIR}/columns_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_columns_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_rows_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/rename_table_service.proto)
 
 set(PROJECT_SOURCES
         ${PROTO_SRCS} ${PROTO_HDRS}
@@ -76,6 +82,9 @@ set(PROJECT_SOURCES
         gRpcClient/gRpcClientsImpl/gRpcDeleteTableClient.cpp            gRpcClient/gRpcClientsImpl/gRpcDeleteTableClient.h
         gRpcClient/gRpcClientsImpl/gRpcCreateCartesianProductClient.cpp gRpcClient/gRpcClientsImpl/gRpcCreateCartesianProductClient.h
         gRpcClient/gRpcClientsImpl/gRpcColumnsClient.cpp                gRpcClient/gRpcClientsImpl/gRpcColumnsClient.h
+        gRpcClient/gRpcClientsImpl/gRpcGetColumnsCountClient.cpp        gRpcClient/gRpcClientsImpl/gRpcGetColumnsCountClient.h
+        gRpcClient/gRpcClientsImpl/gRpcGetRowsCountClient.cpp           gRpcClient/gRpcClientsImpl/gRpcGetRowsCountClient.h
+        gRpcClient/gRpcClientsImpl/gRpcRenameTableClient.cpp            gRpcClient/gRpcClientsImpl/gRpcRenameTableClient.h
 )
 
 qt_add_executable(DatabaseDesktopClient

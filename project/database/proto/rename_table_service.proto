@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+import "empty.proto";
+import "table_id.proto";
+
+service RenameTableService {
+    rpc get (RenameTableRequest) returns (Empty) {}
+}
+
+message RenameTableRequest {
+    string name = 1;
+    TableId tableId = 2;
+}

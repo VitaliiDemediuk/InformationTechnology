@@ -29,7 +29,10 @@ PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS     ${Protobuf_INCLUDE_DIR}/database
                                                 ${Protobuf_INCLUDE_DIR}/delete_table_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/create_cartesian_product_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/column_id.proto
-                                                ${Protobuf_INCLUDE_DIR}/columns_service.proto)
+                                                ${Protobuf_INCLUDE_DIR}/columns_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_columns_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_rows_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/rename_table_service.proto)
 
 PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_tables_count_service.proto
@@ -38,7 +41,10 @@ PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database
                                                 ${Protobuf_INCLUDE_DIR}/get_table_name_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/delete_table_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/create_cartesian_product_service.proto
-                                                ${Protobuf_INCLUDE_DIR}/columns_service.proto)
+                                                ${Protobuf_INCLUDE_DIR}/columns_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_columns_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_rows_count_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/rename_table_service.proto)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../core core)
 
@@ -51,6 +57,9 @@ add_executable(gRpsDatabaseServer
                Services/DeleteTableService.cpp            Services/DeleteTableService.h
                Services/CreateCartesianProductService.cpp Services/CreateCartesianProductService.h
                Services/ColumnsService.cpp                Services/ColumnsService.h
+               Services/GetColumnsCountService.cpp        Services/GetColumnsCountService.h
+               Services/GetRowsCountService.cpp           Services/GetRowsCountService.h
+               Services/RenameTableService.cpp            Services/RenameTableService.h
                ServicesHolder.cpp ServicesHolder.h
                ${PROTO_SRCS} ${PROTO_HDRS}
                ${GRPC_SRCS}  ${GRPC_HDRS}

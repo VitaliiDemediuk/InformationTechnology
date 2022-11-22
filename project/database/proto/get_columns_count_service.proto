@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "table_id.proto";
+
+service ColumnsCountGetter {
+    rpc get (TableId) returns (ColumnsCount) {}
+}
+
+message ColumnsCount {
+    uint64 count = 1;
+}
