@@ -10,11 +10,14 @@
 #include "gRpcGetRowsCountClient.h"
 #include "gRpcGetColumnsCountClient.h"
 #include "gRpcRenameTableClient.h"
+#include "gRpcRowsClient.h"
+#include "gRpcGetAllRowsClient.h"
 
 struct db_grpc_client::Table::Cache
 {
     std::wstring tableName;
     std::unique_ptr<core::VirtualColumnInfo> lastColumn;
+    core::Row lastRow;
 };
 
 db_grpc_client::Table::Table(core::TableId id, std::string target)
@@ -81,30 +84,48 @@ void db_grpc_client::Table::editColumnName(size_t idx, std::wstring name)
     columnClient.edit(id(), idx, *columnInfo);
 }
 
-/// @todo implement!
-const core::Row& db_grpc_client::Table::row(size_t id) const
-{}
+const core::Row& db_grpc_client::Table::row(size_t rowId) const
+{
+    db_grpc_client::Rows rowClient(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    fCache->lastRow = rowClient.get(*this, rowId);
+    return fCache->lastRow;
+}
 
 size_t db_grpc_client::Table::rowCount() const
 {
     db_grpc_client::RowsCountGetter getter(
          grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
-    std::cout << getter.getCount(id()) << std::endl;
     return getter.getCount(id());
 }
 
-/// @todo implement!
 size_t db_grpc_client::Table::createRow()
-{}
+{
+    db_grpc_client::Rows rowClient(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    return rowClient.create(id());
+}
 
-/// @todo implement!GetColumnsCount
-void db_grpc_client::Table::deleteRow(size_t idx)
-{}
+void db_grpc_client::Table::deleteRow(size_t rowId)
+{
+    db_grpc_client::Rows rowClient(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    rowClient.deleteRow(id(), rowId);
+}
 
-/// @todo implement!
-void db_grpc_client::Table::setNewValue(size_t rowIdx, size_t columnIdx, core::CellData data)
-{}
+void db_grpc_client::Table::setNewValue(size_t rowId, size_t columnIdx, core::CellData data)
+{
+    db_grpc_client::Rows rowClient(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    rowClient.editCell(id(), columnIdx, rowId, data);
+}
 
-/// @todo implement!
 void db_grpc_client::Table::forAllRow(std::function<void(size_t id, const core::Row&)> worker) const
-{}
+{
+    db_grpc_client::AllRowsGetter getter(
+         grpc::CreateChannel(fTarget, grpc::InsecureChannelCredentials()));
+    const auto allRows = getter.get(id());
+    for (const auto& rowId : allRows) {
+        worker(rowId, row(rowId));
+    }
+}

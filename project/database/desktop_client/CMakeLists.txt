@@ -41,7 +41,10 @@ PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_SRCS     ${Protobuf_INCLUDE_DIR}/database
                                                 ${Protobuf_INCLUDE_DIR}/columns_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_columns_count_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_rows_count_service.proto
-                                                ${Protobuf_INCLUDE_DIR}/rename_table_service.proto)
+                                                ${Protobuf_INCLUDE_DIR}/rename_table_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/row_id.proto
+                                                ${Protobuf_INCLUDE_DIR}/rows_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_all_rows_service.proto)
 
 PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database_getname_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_tables_count_service.proto
@@ -53,7 +56,9 @@ PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database
                                                 ${Protobuf_INCLUDE_DIR}/columns_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_columns_count_service.proto
                                                 ${Protobuf_INCLUDE_DIR}/get_rows_count_service.proto
-                                                ${Protobuf_INCLUDE_DIR}/rename_table_service.proto)
+                                                ${Protobuf_INCLUDE_DIR}/rename_table_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/rows_service.proto
+                                                ${Protobuf_INCLUDE_DIR}/get_all_rows_service.proto)
 
 set(PROJECT_SOURCES
         ${PROTO_SRCS} ${PROTO_HDRS}
@@ -85,6 +90,8 @@ set(PROJECT_SOURCES
         gRpcClient/gRpcClientsImpl/gRpcGetColumnsCountClient.cpp        gRpcClient/gRpcClientsImpl/gRpcGetColumnsCountClient.h
         gRpcClient/gRpcClientsImpl/gRpcGetRowsCountClient.cpp           gRpcClient/gRpcClientsImpl/gRpcGetRowsCountClient.h
         gRpcClient/gRpcClientsImpl/gRpcRenameTableClient.cpp            gRpcClient/gRpcClientsImpl/gRpcRenameTableClient.h
+        gRpcClient/gRpcClientsImpl/gRpcRowsClient.cpp                   gRpcClient/gRpcClientsImpl/gRpcRowsClient.h
+        gRpcClient/gRpcClientsImpl/gRpcGetAllRowsClient.cpp             gRpcClient/gRpcClientsImpl/gRpcGetAllRowsClient.h
 )
 
 qt_add_executable(DatabaseDesktopClient

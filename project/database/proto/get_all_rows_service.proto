@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "table_id.proto";
+
+service AllRowsGetter {
+    rpc get (TableId) returns (AllRowsId) {}
+}
+
+message AllRowsId {
+    repeated uint64 rowId = 1;
+}

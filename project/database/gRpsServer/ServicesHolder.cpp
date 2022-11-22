@@ -18,6 +18,8 @@
 #include "Services/GetRowsCountService.h"
 #include "Services/GetColumnsCountService.h"
 #include "Services/RenameTableService.h"
+#include "Services/RowsService.h"
+#include "Services/GetAllRowsService.h"
 
 
 struct db_grpc_server::ServicesHolder::Services
@@ -39,6 +41,8 @@ db_grpc_server::ServicesHolder::ServicesHolder(core::VirtualDatabase& db)
     fServices->list.emplace_back(std::make_unique<service::GetRowsCount>(db));
     fServices->list.emplace_back(std::make_unique<service::GetColumnsCount>(db));
     fServices->list.emplace_back(std::make_unique<service::RenameTable>(db));
+    fServices->list.emplace_back(std::make_unique<service::Rows>(db));
+    fServices->list.emplace_back(std::make_unique<service::AllRowsGetter>(db));
 }
 
 db_grpc_server::ServicesHolder::~ServicesHolder() = default;

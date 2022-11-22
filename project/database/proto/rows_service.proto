@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+import "empty.proto";
+import "row_id.proto";
+import "table_id.proto";
+
+service RowsService {
+    rpc get(RowId) returns (Row) {}
+    rpc create(TableId) returns (RowCreateResponse) {}
+    rpc editCell(CellEditRequest) returns (Empty) {}
+    rpc deleteRow(RowId) returns (Empty) {}
+}
+
+message RowCreateResponse {
+    uint64 rowId = 1;
+}
+
+message File {
+    string name = 1;
+    bytes data = 2;
+}
+
+message Cell {
+    oneof data {
+        Empty empty = 1;
+        int64 integer = 2;
+        double real = 3;
+        string text = 4;
+        File file = 5;
+    }
+}
+
+message CellId {
+    uint64 rowId = 1;
+    uint64 columnIdx = 2;
+    TableId tableId = 3;
+}
+
+message Row {
+    repeated Cell cells = 1;
+}
+
+message CellEditRequest {
+    CellId cellId = 1;
+    Cell cell = 2;
+}
