@@ -10,12 +10,15 @@ from ariadne.constants import PLAYGROUND_HTML
 
 # resolvers
 from resolvers.get_table_list_resolver import GetTableListResolver
+from resolvers.get_table_info_resolver import GetTableInfoResolver
+
 
 app = Flask(__name__)
 CORS(app)
 
 query = ObjectType("Query")
 query.set_field("getTableList", GetTableListResolver())
+query.set_field("getTableInfo", GetTableInfoResolver())
 
 type_defs = load_schema_from_path("schema.graphql")
 schema = make_executable_schema(

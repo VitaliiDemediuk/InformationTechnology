@@ -9,10 +9,29 @@ type TableListItem {
 
 type GetTableListResult {
     success: Boolean!
-    errors: [String]
+    errors: [String!]
     tables_list: [TableListItem!]
+}
+
+type ColumnInfo {
+    name: String!
+    type: String!
+    lower_limit: Int
+    upper_limit: Int
+}
+
+type TableInfo {
+    table_name: String!
+    columns: [ColumnInfo!]
+}
+
+type GetTableInfoResult {
+    success: Boolean!
+    errors: [String!]
+    table_info: TableInfo
 }
 
 type Query {
     getTableList: GetTableListResult!
+    getTableInfo(table_id: ID): GetTableInfoResult
 }
