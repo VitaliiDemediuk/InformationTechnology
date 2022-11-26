@@ -1,0 +1,18 @@
+schema {
+    query: Query
+}
+
+type TableListItem {
+    id: ID!
+    name: String!
+}
+
+type GetTableListResult {
+    success: Boolean!
+    errors: [String]
+    tables_list: [TableListItem!]
+}
+
+type Query {
+    getTableList: GetTableListResult!
+}
