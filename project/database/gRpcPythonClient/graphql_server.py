@@ -13,6 +13,10 @@ from resolvers.get_table_list_resolver import GetTableListResolver
 from resolvers.get_table_info_resolver import GetTableInfoResolver
 from resolvers.get_table_resolver import GetTableResolver
 
+from resolvers.table_mutation_resolver import CreateNewTableResolver
+from resolvers.table_mutation_resolver import RenameTableResolver
+from resolvers.table_mutation_resolver import DeleteTableResolver
+
 
 app = Flask(__name__)
 CORS(app)
@@ -22,9 +26,14 @@ query.set_field("getTableList", GetTableListResolver())
 query.set_field("getTableInfo", GetTableInfoResolver())
 query.set_field("getTable", GetTableResolver())
 
+mutation = ObjectType("Mutation")
+mutation.set_field("createNewTable", CreateNewTableResolver())
+mutation.set_field("renameTable", RenameTableResolver())
+mutation.set_field("deleteTable", DeleteTableResolver())
+
 type_defs = load_schema_from_path("schema.graphql")
 schema = make_executable_schema(
-    type_defs, query, snake_case_fallback_resolvers
+    type_defs, query, mutation, snake_case_fallback_resolvers
 )
 
 
