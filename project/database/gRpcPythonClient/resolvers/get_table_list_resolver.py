@@ -4,6 +4,7 @@ import grpc_generated.get_all_tables_service_pb2_grpc as get_all_tables_service
 import grpc_generated.get_table_name_service_pb2_grpc as get_table_name_service
 
 from grpc_generated import empty_pb2
+from grpc_generated import column_id_pb2
 from grpc_generated import table_id_pb2
 
 import grpc_generated.target as target

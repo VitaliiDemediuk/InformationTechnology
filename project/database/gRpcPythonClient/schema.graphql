@@ -89,8 +89,8 @@ type Mutation {
     renameTable(table_id: Int!, new_name: String!): MutationResult!
     deleteTable(table_id: Int!): MutationResult!
 
-    createDefaultColumn(table_id: Int!, column_idx: Int!, name: String!, type: String!): MutationResult!
-    createIntIntervalColumn(table_id: Int!, column_idx: Int!, name: String!, lower_limit: Int!, upper_limit: Int!): MutationResult!
+    createDefaultColumn(table_id: Int!, name: String!, column_type: String!): MutationResult!
+    createIntIntervalColumn(table_id: Int!, name: String!, lower_limit: Int!, upper_limit: Int!): MutationResult!
     renameColumn(table_id: Int!, column_idx: Int!, new_name: String!): MutationResult!
     deleteColumn(table_id: Int!, column_idx: Int!): MutationResult!
 

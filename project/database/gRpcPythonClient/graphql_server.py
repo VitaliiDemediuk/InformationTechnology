@@ -17,6 +17,11 @@ from resolvers.table_mutation_resolver import CreateNewTableResolver
 from resolvers.table_mutation_resolver import RenameTableResolver
 from resolvers.table_mutation_resolver import DeleteTableResolver
 
+from resolvers.column_mutation_resolver import CreateDefaultColumnResolver
+from resolvers.column_mutation_resolver import CreateIntIntervalColumnResolver
+from resolvers.column_mutation_resolver import RenameColumnResolver
+from resolvers.column_mutation_resolver import DeleteColumnResolver
+
 
 app = Flask(__name__)
 CORS(app)
@@ -30,6 +35,11 @@ mutation = ObjectType("Mutation")
 mutation.set_field("createNewTable", CreateNewTableResolver())
 mutation.set_field("renameTable", RenameTableResolver())
 mutation.set_field("deleteTable", DeleteTableResolver())
+
+mutation.set_field("createDefaultColumn", CreateDefaultColumnResolver())
+mutation.set_field("createIntIntervalColumn", CreateIntIntervalColumnResolver())
+mutation.set_field("renameColumn", RenameColumnResolver())
+mutation.set_field("deleteColumn", DeleteColumnResolver())
 
 type_defs = load_schema_from_path("schema.graphql")
 schema = make_executable_schema(
