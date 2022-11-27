@@ -102,4 +102,6 @@ type Mutation {
     editStringCell(table_id: Int!, column_idx: Int!, row_id: Int!, data: String!): MutationResult!
     editIntervalIntCell(table_id: Int!, column_idx: Int!, row_id: Int!, data: Int!): MutationResult!
     clearCell(table_id: Int!, column_idx: Int!, row_id: Int!): MutationResult!
+
+    createCartesianProduct(first_table_id: Int! second_table_id: Int!): MutationResult!
 }

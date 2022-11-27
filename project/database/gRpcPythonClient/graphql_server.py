@@ -31,6 +31,7 @@ from resolvers.row_mutation_resolver import EditCharCellResolver
 from resolvers.row_mutation_resolver import EditStringCellResolver
 from resolvers.row_mutation_resolver import ClearCellResolver
 
+from resolvers.create_cartesian_product_resolver import CreateCartesianProductResolver
 
 
 app = Flask(__name__)
@@ -60,6 +61,9 @@ mutation.set_field("editCharCell", EditCharCellResolver())
 mutation.set_field("editStringCell", EditStringCellResolver())
 mutation.set_field("editIntervalIntCell", EditIntCellResolver())
 mutation.set_field("clearCell", ClearCellResolver())
+
+mutation.set_field("createCartesianProduct", CreateCartesianProductResolver())
+
 type_defs = load_schema_from_path("schema.graphql")
 schema = make_executable_schema(
     type_defs, query, mutation, snake_case_fallback_resolvers
