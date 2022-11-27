@@ -1,5 +1,6 @@
 schema {
     query: Query
+    mutation: Mutation
 }
 
 type TableListItem {
@@ -76,4 +77,29 @@ type Query {
     getTableList: GetTableListResult!
     getTableInfo(table_id: ID): GetTableInfoResult
     getTable(table_id: ID): GetTableResult
+}
+
+type MutationResult {
+    success: Boolean!
+    errors: [String!]
+}
+
+type Mutation {
+    createNewTable(name: String!): MutationResult
+    renameTable(table_id: Int!, new_name: String!): MutationResult!
+    deleteTable(table_id: Int!): MutationResult!
+
+    createDefaultColumn(table_id: Int!, column_idx: Int!, name: String!, type: String!): MutationResult!
+    createIntIntervalColumn(table_id: Int!, column_idx: Int!, name: String!, lower_limit: Int!, upper_limit: Int!): MutationResult!
+    renameColumn(table_id: Int!, column_idx: Int!, new_name: String!): MutationResult!
+    deleteColumn(table_id: Int!, column_idx: Int!): MutationResult!
+
+    createNewRow(table_id: Int!): MutationResult!
+    deleteRow(table_id: Int!, row_id: Int!): MutationResult!
+    editIntCell(table_id: Int!, cell_idx: Int!, row_id: Int!, data: Int!): MutationResult!
+    editRealCell(table_id: Int!, cell_idx: Int!, row_id: Int!, data: Float!): MutationResult!
+    editCharCell(table_id: Int!, cell_idx: Int!, row_id: Int!, data: String!): MutationResult!
+    editStringCell(table_id: Int!, cell_idx: Int!, row_id: Int!, data: String!): MutationResult!
+    editFileCell(table_id: Int!, cell_idx: Int!, row_id: Int!, filename: String!, data: String!): MutationResult!
+    editIntervalIntCell(table_id: Int!, cell_idx: Int!, row_id: Int!, data: Int!): MutationResult!
 }
