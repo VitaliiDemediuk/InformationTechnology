@@ -31,7 +31,49 @@ type GetTableInfoResult {
     table_info: TableInfo
 }
 
+type IntegerWrapper {
+    int_value: Int!
+}
+
+type RealWrapper {
+    real_value: Float!
+}
+
+type CharWrapper {
+    char_value: String!
+}
+
+type StringWrapper {
+    str_value: String
+}
+
+type File {
+    filename: String!
+}
+
+type IntervalInteger {
+    int_value: Int!
+}
+
+union Cell = IntegerWrapper | RealWrapper | CharWrapper | StringWrapper | File | IntervalInteger
+
+type Row {
+    row_id: Int
+    cells: [Cell]
+}
+
+type Table {
+    rows: [Row!]
+}
+
+type GetTableResult {
+    success: Boolean!
+    errors: [String!]
+    table: Table
+}
+
 type Query {
     getTableList: GetTableListResult!
     getTableInfo(table_id: ID): GetTableInfoResult
+    getTable(table_id: ID): GetTableResult
 }
