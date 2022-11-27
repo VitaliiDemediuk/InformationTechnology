@@ -22,6 +22,16 @@ from resolvers.column_mutation_resolver import CreateIntIntervalColumnResolver
 from resolvers.column_mutation_resolver import RenameColumnResolver
 from resolvers.column_mutation_resolver import DeleteColumnResolver
 
+from resolvers.row_mutation_resolver import CreateNewRowResolver
+from resolvers.row_mutation_resolver import DeleteRowResolver
+
+from resolvers.row_mutation_resolver import EditIntCellResolver
+from resolvers.row_mutation_resolver import EditRealCellResolver
+from resolvers.row_mutation_resolver import EditCharCellResolver
+from resolvers.row_mutation_resolver import EditStringCellResolver
+from resolvers.row_mutation_resolver import ClearCellResolver
+
+
 
 app = Flask(__name__)
 CORS(app)
@@ -41,6 +51,15 @@ mutation.set_field("createIntIntervalColumn", CreateIntIntervalColumnResolver())
 mutation.set_field("renameColumn", RenameColumnResolver())
 mutation.set_field("deleteColumn", DeleteColumnResolver())
 
+mutation.set_field("createNewRow", CreateNewRowResolver())
+mutation.set_field("deleteRow", DeleteRowResolver())
+
+mutation.set_field("editIntCell", EditIntCellResolver())
+mutation.set_field("editRealCell", EditRealCellResolver())
+mutation.set_field("editCharCell", EditCharCellResolver())
+mutation.set_field("editStringCell", EditStringCellResolver())
+mutation.set_field("editIntervalIntCell", EditIntCellResolver())
+mutation.set_field("clearCell", ClearCellResolver())
 type_defs = load_schema_from_path("schema.graphql")
 schema = make_executable_schema(
     type_defs, query, mutation, snake_case_fallback_resolvers

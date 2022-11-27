@@ -72,7 +72,6 @@ class GetTableResolver:
                                 "char_value": grpc_cell.text
                             })
                         case "STRING":
-                            print("STRING", grpc_cell.text)
                             cells.append({
                                 "__typename": "StringWrapper",
                                 "str_value": grpc_cell.text

@@ -1,12 +1,10 @@
 import grpc
 
 import grpc_generated.columns_service_pb2_grpc as columns_service
-
-from grpc_generated import table_id_pb2
+import grpc_generated.target as target
 from grpc_generated import column_id_pb2
 from grpc_generated import columns_service_pb2
-
-import grpc_generated.target as target
+from grpc_generated import table_id_pb2
 
 
 def create_column(table_id: int, column_info):

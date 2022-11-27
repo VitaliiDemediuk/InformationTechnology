@@ -163,6 +163,6 @@ grpc::Status db_grpc_server::service::Rows::deleteRow(
     const auto tableId = request->tableid().id();
     const auto rowId = request->id();
     std::cout << "Request. Delete row " << rowId << " in table" << tableId<< std::endl;
-    fDb.table(tableId).deleteColumn(rowId);
+    fDb.table(tableId).deleteRow(rowId);
     return grpc::Status::OK;
 }
