@@ -154,7 +154,7 @@ auto readTableInfo(mongocxx::database& mongoDb, core::Database& db) -> CustomTab
         mongocxx::cursor cursor = coll.find({});
 
         for (auto doc : cursor) {
-            auto tableNameUtf8 = doc.find("table_name")->get_string().value.to_string();
+            auto tableNameUtf8 = doc.find("table_name")->get_utf8().value.to_string();
             const auto tableId = db.createTable(core::utils::utf8ToWstring(tableNameUtf8));
             auto& table = db.table(tableId);
             tableRefs.push_back(dynamic_cast<core::CustomTable&>(table));
@@ -164,8 +164,8 @@ auto readTableInfo(mongocxx::database& mongoDb, core::Database& db) -> CustomTab
 
                 const auto& colInfo = it->get_document().value;
                 std::unique_ptr<core::VirtualColumnInfo> coreColumnInfo;
-                auto columnName = core::utils::utf8ToWstring(colInfo.find("column_name")->get_string().value.to_string());
-                const auto typeName = core::utils::utf8ToWstring(colInfo.find("type")->get_string().value.to_string());
+                auto columnName = core::utils::utf8ToWstring(colInfo.find("column_name")->get_utf8().value.to_string());
+                const auto typeName = core::utils::utf8ToWstring(colInfo.find("type")->get_utf8().value.to_string());
                 const auto type = core::dataTypeFromString(typeName).value();
                 if (core::isIntervalType(type)) {
                     if (type == core::DataType::INTERVAL_INTEGER) {
@@ -221,18 +221,18 @@ void core::save_load::MongoDbStrategy::readRows(mongocxx::database& mongoDb, Cus
                         break;
                     }
                     case core::DataType::CHAR: {
-                        row.push_back(core::utils::utf8ToWstring(cell.get_string().value.to_string())[0]);
+                        row.push_back(core::utils::utf8ToWstring(cell.get_utf8().value.to_string())[0]);
                         break;
                     }
                     case core::DataType::STRING: {
-                        row.push_back(core::utils::utf8ToWstring(cell.get_string().value.to_string()));
+                        row.push_back(core::utils::utf8ToWstring(cell.get_utf8().value.to_string()));
                         break;
                     }
                     case core::DataType::TEXT_FILE: {
                         const auto cellDoc = cell.get_document().value;
                         core::column_t<core::DataType::TEXT_FILE> file;
-                        file.name = core::utils::utf8ToWstring(cellDoc.find("file_name")->get_string().value.to_string());
-                        file.data = cellDoc.find("data")->get_string().value.to_string();
+                        file.name = core::utils::utf8ToWstring(cellDoc.find("file_name")->get_utf8().value.to_string());
+                        file.data = cellDoc.find("data")->get_utf8().value.to_string();
                         row.push_back(std::move(file));
                         break;
                     }

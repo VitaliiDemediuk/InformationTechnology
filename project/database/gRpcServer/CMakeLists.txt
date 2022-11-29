@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(gRpsDatabaseServer)
+project(gRpcDatabaseServer)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -53,7 +53,7 @@ PROTOBUF_GENERATE_GRPC_CPP(GRPC_SRCS GRPC_HDRS  ${Protobuf_INCLUDE_DIR}/database
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../core core)
 
-add_executable(gRpsDatabaseServer
+add_executable(gRpcDatabaseServer
                Services/GetDatabaseNameService.cpp        Services/GetDatabaseNameService.h
                Services/GetTableCountService.cpp          Services/GetTableCountService.h
                Services/CreateTableService.cpp            Services/CreateTableService.h
@@ -72,11 +72,11 @@ add_executable(gRpsDatabaseServer
                ${GRPC_SRCS}  ${GRPC_HDRS}
                main.cpp)
 
-target_link_libraries(gRpsDatabaseServer
+target_link_libraries(gRpcDatabaseServer
         core
         ${_REFLECTION}
         ${_GRPC_GRPCPP}
         ${_PROTOBUF_LIBPROTOBUF}
         ${Boost_LIBRARIES})
 
-target_include_directories(gRpsDatabaseServer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../core/include)
+target_include_directories(gRpcDatabaseServer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../core/include)

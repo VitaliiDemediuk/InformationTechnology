@@ -34,7 +34,7 @@ CmdResult processCmd(int argc, char** argv)
     desc.add_options()
         ("load-type", po::value<std::string>(), "set serializing type(custom, sqlite, mongodb)")
         ("server-ip", po::value<std::string>(), "set server ip")
-        ("server-port", po::value<uint16_t>(), "set server ip")
+        ("server-port", po::value<uint16_t>(), "set server port")
         ("database-name", po::value<std::string>(), "set database name")
         ("database-file", po::value<std::string>(), "set database file")
         ("database-ip", po::value<std::string>(), "set database ip")
@@ -48,7 +48,7 @@ CmdResult processCmd(int argc, char** argv)
     const bool haveServerPort = vm.contains("server-port");
 
     if (haveServerIp && haveServerPort) {
-        res.server_address = vm["server-ip"].as<std::string>() + ":" + std::to_string(vm["server-ip"].as<uint16_t>());
+        res.server_address = vm["server-ip"].as<std::string>() + ":" + std::to_string(vm["server-port"].as<uint16_t>());
     } else if (haveServerIp) {
         throw std::logic_error("Need set server port!");
     } else if (haveServerPort) {

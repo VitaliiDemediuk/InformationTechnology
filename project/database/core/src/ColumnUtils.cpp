@@ -2,6 +2,7 @@
 
 // STL
 #include <array>
+#include <algorithm>
 
 constexpr auto dataTypeNameArray = std::array<std::wstring_view, static_cast<size_t>(core::DataType::NN)> {
     L"Integer", L"Real", L"Char", L"String",
