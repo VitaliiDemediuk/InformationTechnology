@@ -74,7 +74,6 @@ public:
 private:
     const core::TableId fId;
     const size_t fColumnIdx;
-    std::wstring newName;
 };
 
 class AddRow: public AbstractCommand

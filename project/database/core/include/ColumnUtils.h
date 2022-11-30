@@ -29,12 +29,16 @@ template <typename T>
 struct IntervalType {
     using Type = T;
     Type data{};
+
+    bool operator==(const IntervalType&) const = default;
 };
 
 struct File
 {
     std::wstring name;
     std::string data;
+
+    bool operator==(const File&) const = default;
 };
 
 template <DataType type>
